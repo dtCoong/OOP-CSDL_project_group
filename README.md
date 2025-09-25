@@ -53,7 +53,7 @@ Hệ thống quản lý sức khỏe cá nhân là một giải pháp toàn di�
 - **Tương tác thuốc**: Kiểm tra tương tác có hại
 
 ## 🗃️ Cấu trúc Database
-### (Tổng Quan)(https://docs.google.com/document/d/1ttHrxGBaiZZBr1jj7Y-oIqUlphCpyd-1dt7R8IQw9RA/edit?fbclid=IwY2xjawNCF-5leHRuA2FlbQIxMQABHoZzjHJ6lXB_jhJqQqWHQx0PleQOEkmZXI-pgZ-ZKic18hn4j893XGNiQoqE_aem_WsQOElaLaz1YyTB0f4gAxQ&tab=t.0)
+### [Tổng Quan](https://docs.google.com/document/d/1ttHrxGBaiZZBr1jj7Y-oIqUlphCpyd-1dt7R8IQw9RA/edit?fbclid=IwY2xjawNCF-5leHRuA2FlbQIxMQABHoZzjHJ6lXB_jhJqQqWHQx0PleQOEkmZXI-pgZ-ZKic18hn4j893XGNiQoqE_aem_WsQOElaLaz1YyTB0f4gAxQ&tab=t.0)
 ### 📊 Thống kê
 - **15 bảng** chính
 - **Hỗ trợ Unicode** đầy đủ cho tiếng Việt
