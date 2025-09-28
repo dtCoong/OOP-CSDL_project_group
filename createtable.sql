@@ -2,7 +2,7 @@
 CREATE DATABASE IF NOT EXISTS personal_health_management;
 USE personal_health_management;
 
--- Bảng Users - chỉ có bệnh nhân
+-- Bảng Users 
 CREATE TABLE Users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -28,7 +28,6 @@ CREATE TABLE Family_Members (
     insurance_number VARCHAR(50),
     phone VARCHAR(15) UNIQUE,  -- chỉ còn một số điện thoại duy nhất
     avatar_path VARCHAR(255),
-    notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
@@ -50,6 +49,7 @@ CREATE TABLE Departments (
     hospital_id INT NOT NULL,
     name VARCHAR(200) NOT NULL,
     description TEXT,
+    location_details TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (hospital_id) REFERENCES Hospitals(hospital_id) ON DELETE CASCADE
 );
@@ -57,33 +57,15 @@ CREATE TABLE Departments (
 -- Bác sỹ (mỗi bác sỹ thuộc 1 khoa)
 CREATE TABLE Doctors (
     doctor_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
     department_id INT NOT NULL,  -- liên kết khoa
-    doctor_code VARCHAR(20) UNIQUE NOT NULL,
     specialization VARCHAR(100) NOT NULL,
     degree ENUM('Bác sỹ', 'Thạc sỹ', 'Tiến sỹ', 'Giáo sư') DEFAULT 'Bác sỹ',
     experience_years INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    full_name VARCHAR(100) NOT NULL,
+    avatar_path VARCHAR(255),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (department_id) REFERENCES Departments(department_id) ON DELETE CASCADE
-);
-
--- Bảng Patient_Access_Permissions
-CREATE TABLE Patient_Access_Permissions (
-    permission_id INT PRIMARY KEY AUTO_INCREMENT,
-    patient_user_id INT NOT NULL,
-    hospital_id INT NOT NULL,
-    access_type ENUM('Đọc', 'Đọc-Ghi') DEFAULT 'Đọc',
-    granted_date DATETIME NOT NULL,
-    expires_date DATETIME,
-    granted_by INT,
-    reason TEXT,
-    status ENUM('Hoạt động', 'Hết hạn', 'Thu hồi') DEFAULT 'Hoạt động',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (patient_user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (hospital_id) REFERENCES Hospitals(hospital_id),
-    FOREIGN KEY (granted_by) REFERENCES Users(user_id)
 );
 
 -- Bảng Medical_History - tiền sử bệnh
@@ -203,19 +185,6 @@ CREATE TABLE Medication_Schedule (
     FOREIGN KEY (detail_id) REFERENCES Prescription_Details(detail_id) ON DELETE CASCADE
 );
 
--- Bảng Medication_Logs - log uống thuốc
-CREATE TABLE Medication_Logs (
-    log_id INT PRIMARY KEY AUTO_INCREMENT,
-    detail_id INT NOT NULL,
-    scheduled_date DATE NOT NULL,
-    scheduled_time TIME NOT NULL,
-    actual_time DATETIME,
-    status ENUM('Chưa uống', 'Đã uống', 'Bỏ lỡ', 'Uống muộn') DEFAULT 'Chưa uống',
-    notes TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (detail_id) REFERENCES Prescription_Details(detail_id) ON DELETE CASCADE
-);
-
 -- Bảng Vaccine_Templates - lịch tiêm chủng mẫu
 CREATE TABLE Vaccine_Templates (
     template_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -240,8 +209,6 @@ CREATE TABLE Vaccination_Records (
     vaccination_date DATE,
     next_due_date DATE,
     batch_number VARCHAR(50),
-    clinic_location VARCHAR(200),
-    administered_by VARCHAR(100),
     status ENUM('Đã tiêm', 'Chưa tiêm', 'Quá hạn', 'Hoãn', 'Từ chối') DEFAULT 'Chưa tiêm',
     side_effects TEXT,
     notes TEXT,
@@ -258,8 +225,6 @@ CREATE TABLE Documents (
     document_type ENUM('Kết quả xét nghiệm', 'Chẩn đoán hình ảnh', 'Đơn thuốc', 'Bệnh án', 'Khác') NOT NULL,
     title VARCHAR(200) NOT NULL,
     file_path VARCHAR(500) NOT NULL,
-    file_size INT,
-    mime_type VARCHAR(100),
     description TEXT,
     document_date DATE,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
