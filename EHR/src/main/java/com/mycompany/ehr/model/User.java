@@ -3,6 +3,16 @@ package com.mycompany.ehr.model;
 import java.time.LocalDateTime;
 
 public class User {
+    // user_id INT PRIMARY KEY AUTO_INCREMENT,
+    // username VARCHAR(50) UNIQUE NOT NULL,
+    // password_hash VARCHAR(255) NOT NULL,
+    // email VARCHAR(100) UNIQUE NOT NULL,
+    // phone VARCHAR(15) UNIQUE NOT NULL,
+    // full_name VARCHAR(100) NOT NULL,
+    // is_active BOOLEAN DEFAULT TRUE,
+    // last_login DATETIME,
+    // created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    // updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     private int user_id;
     private String username;
     private String password_hash;
@@ -14,8 +24,22 @@ public class User {
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
-    public User() {}
-        public User(int user_id, String username, String password_hash, String email, 
+    public User() {
+        this.is_active = true;
+        this.created_at = LocalDateTime.now();
+        this.updated_at = LocalDateTime.now();
+    }
+    
+    public User(String username, String password_hash, String email, String phone, String full_name) {
+        this();
+        this.username = username;
+        this.password_hash = password_hash;
+        this.email = email;
+        this.phone = phone;
+        this.full_name = full_name;
+    }
+
+    public User(int user_id, String username, String password_hash, String email, 
                 String phone, String full_name, boolean is_active, 
                 LocalDateTime last_login, LocalDateTime created_at, LocalDateTime updated_at) {
         this.user_id = user_id;
@@ -59,18 +83,18 @@ public class User {
 
     public LocalDateTime getUpdatedAt() { return updated_at; }
     public void setUpdatedAt(LocalDateTime updated_at) { this.updated_at = updated_at; }
+    @Override
+    public String toString() {
+        return "User{" +
+                "user_id=" + user_id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", full_name='" + full_name + '\'' +
+                ", is_active=" + is_active +
+                ", last_login=" + last_login +
+                ", created_at=" + created_at +
+                ", updated_at=" + updated_at +
+                '}';
+    }
 }
-/*
- * CREATE TABLE Users (
-    user_id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(15) UNIQUE NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    last_login DATETIME,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
- */
