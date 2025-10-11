@@ -1,4 +1,4 @@
-package com.mycompany.ehr;
+package com.mycompany.ehr.model;
 import java.util.*;
 import java.time.*;
 public class PrescriptionDetail {
