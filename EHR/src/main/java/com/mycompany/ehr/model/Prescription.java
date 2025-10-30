@@ -1,52 +1,91 @@
 package com.mycompany.ehr.model;
-import java.util.*;
-import java.time.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class Prescription {
-    private int prescriptionId;
-    private int memberId;
-    private Integer appointmentId;
-    private Integer doctorId;
-    private LocalDate prescriptionDate;
-    private String diagnosis;
-    private String notes;
-    private double totalCost;
-    private String status;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    public Prescription() {}
+    public enum PrescriptionStatus {
+        DANG_SU_DUNG("Đang sử dụng"),
+        DA_HOAN_THANH("Đã hoàn thành"),
+        DA_DUNG("Đã dừng"),
+        HET_HAN("Hết hạn");
 
-    public Prescription(int prescriptionId, int memberId, Integer appointmentId, Integer doctorId,
-                         LocalDate prescriptionDate, String diagnosis, String notes,
-                         double totalCost, String status, LocalDateTime createdAt,
-                         LocalDateTime updatedAt) {
-        this.prescriptionId = prescriptionId;
-        this.memberId = memberId;
-        this.appointmentId = appointmentId;
-        this.doctorId = doctorId;
-        this.prescriptionDate = prescriptionDate;
-        this.diagnosis = diagnosis;
-        this.notes = notes;
-        this.totalCost = totalCost;
-        this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        private String displayName;
+
+        PrescriptionStatus(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
     }
 
-    public int getPrescriptionId() { return prescriptionId; }
-    public void setPrescriptionId(int prescriptionId) { this.prescriptionId = prescriptionId; }
+    private int prescription_id;
+    private int member_id;
+    private Integer appointment_id; 
+    private Integer doctor_id; 
+    private LocalDate prescription_date;
+    private String diagnosis;
+    private String notes;
+    private BigDecimal total_cost; 
+    private PrescriptionStatus status;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 
-    public int getMemberId() { return memberId; }
-    public void setMemberId(int memberId) { this.memberId = memberId; }
+    public Prescription() {
+        this.created_at = LocalDateTime.now();
+        this.updated_at = LocalDateTime.now();
+        this.status = PrescriptionStatus.DANG_SU_DUNG; 
+    }
 
-    public Integer getAppointmentId() { return appointmentId; }
-    public void setAppointmentId(Integer appointmentId) { this.appointmentId = appointmentId; }
+    public Prescription(int member_id, Integer appointment_id, Integer doctor_id,
+                        LocalDate prescription_date, String diagnosis, String notes,
+                        BigDecimal total_cost, PrescriptionStatus status) {
+        this(); 
+        this.member_id = member_id;
+        this.appointment_id = appointment_id;
+        this.doctor_id = doctor_id;
+        this.prescription_date = prescription_date;
+        this.diagnosis = diagnosis;
+        this.notes = notes;
+        this.total_cost = total_cost;
+        this.status = status;
+    }
 
-    public Integer getDoctorId() { return doctorId; }
-    public void setDoctorId(Integer doctorId) { this.doctorId = doctorId; }
+    public Prescription(int prescription_id, int member_id, Integer appointment_id, Integer doctor_id,
+                        LocalDate prescription_date, String diagnosis, String notes,
+                        BigDecimal total_cost, String status, LocalDateTime created_at,
+                        LocalDateTime updated_at) {
+        this.prescription_id = prescription_id;
+        this.member_id = member_id;
+        this.appointment_id = appointment_id;
+        this.doctor_id = doctor_id;
+        this.prescription_date = prescription_date;
+        this.diagnosis = diagnosis;
+        this.notes = notes;
+        this.total_cost = total_cost;
+        setStatus(status); 
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
 
-    public LocalDate getPrescriptionDate() { return prescriptionDate; }
-    public void setPrescriptionDate(LocalDate prescriptionDate) { this.prescriptionDate = prescriptionDate; }
+    public int getPrescriptionId() { return prescription_id; }
+    public void setPrescriptionId(int prescription_id) { this.prescription_id = prescription_id; }
+
+    public int getMemberId() { return member_id; }
+    public void setMemberId(int member_id) { this.member_id = member_id; }
+
+    public Integer getAppointmentId() { return appointment_id; }
+    public void setAppointmentId(Integer appointment_id) { this.appointment_id = appointment_id; }
+
+    public Integer getDoctorId() { return doctor_id; }
+    public void setDoctorId(Integer doctor_id) { this.doctor_id = doctor_id; }
+
+    public LocalDate getPrescriptionDate() { return prescription_date; }
+    public void setPrescriptionDate(LocalDate prescription_date) { this.prescription_date = prescription_date; }
 
     public String getDiagnosis() { return diagnosis; }
     public void setDiagnosis(String diagnosis) { this.diagnosis = diagnosis; }
@@ -54,15 +93,36 @@ public class Prescription {
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
 
-    public double getTotalCost() { return totalCost; }
-    public void setTotalCost(double totalCost) { this.totalCost = totalCost; }
+    public BigDecimal getTotalCost() { return total_cost; }
+    public void setTotalCost(BigDecimal total_cost) { this.total_cost = total_cost; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getStatus() {
+        return status != null ? status.getDisplayName() : null;
+    }
+    public void setStatus(String status) {
+        this.status = status != null ? PrescriptionStatus.valueOf(status) : null;
+    }
+    // Overloaded setter for direct enum use
+    public void setStatus(PrescriptionStatus status) {
+        this.status = status;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getCreatedAt() { return created_at; }
+    public void setCreatedAt(LocalDateTime created_at) { this.created_at = created_at; }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public LocalDateTime getUpdatedAt() { return updated_at; }
+    public void setUpdatedAt(LocalDateTime updated_at) { this.updated_at = updated_at; }
+
+    @Override
+    public String toString() {
+        return "Prescription{" +
+                "prescription_id=" + prescription_id +
+                ", member_id=" + member_id +
+                ", prescription_date=" + prescription_date +
+                ", diagnosis='" + diagnosis + '\'' +
+                ", status=" + (status != null ? status.getDisplayName() : "null") +
+                ", created_at=" + created_at +
+                ", updated_at=" + updated_at +
+                '}';
+    }
 }
