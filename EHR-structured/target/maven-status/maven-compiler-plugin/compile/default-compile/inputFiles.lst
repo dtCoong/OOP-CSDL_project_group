@@ -1,0 +1,16 @@
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\dao\DocumentsDao.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\ui\DocumentsPanelVN.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\dao\DAOInterface.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\model\NotificationPriority.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\model\NotificationType.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\dao\JDBCUtil.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\ui\IconFactory.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\model\Documents.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\ui\FilePreviewPanel.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\ui\NotificationCenterPanel.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\model\SchemaInit.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\ui\EHRApp.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\model\NotificationPreferences.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\dao\NotificationsDao.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\model\DocumentType.java
+D:\Downloads\EHR-structured\EHR-structured\src\main\java\com\mycompany\ehr\model\Notifications.java
