@@ -240,8 +240,6 @@ CREATE TABLE Vaccination_Records (
     vaccination_date DATE,
     next_due_date DATE,
     batch_number VARCHAR(50),
-    clinic_location VARCHAR(200),
-    administered_by VARCHAR(100),
     status ENUM('Đã tiêm', 'Chưa tiêm', 'Quá hạn', 'Hoãn', 'Từ chối') DEFAULT 'Chưa tiêm',
     side_effects TEXT,
     notes TEXT,

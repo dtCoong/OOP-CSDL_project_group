@@ -1,4 +1,5 @@
-package EHR.src.main.java.com.mycompany.ehr.model.Vaccine_Templates_Table;
+package com.mycompany.ehr.model;
+
 import java.time.LocalDateTime;
 
 public class VaccineTemplates {

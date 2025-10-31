@@ -1,4 +1,5 @@
-package EHR.src.main.java.com.mycompany.ehr.model.Vaccination_Records_Table;
+package com.mycompany.ehr.model;
+
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
@@ -13,7 +14,8 @@ public class VaccinationRecords {
     private LocalDate vaccinationDate;
     private LocalDate nextDueDate;    
     private String batchNumber;       
-    private String status;            
+    private String status;
+    private String sideEffects;            
     private String notes;             
     private LocalDateTime createdAt;  
     
@@ -21,7 +23,7 @@ public class VaccinationRecords {
 
     public VaccinationRecords(int vaccinationId, int memberId, Integer templateId, String vaccineName,
                               int doseNumber, LocalDate vaccinationDate, LocalDate nextDueDate,
-                              String batchNumber, String status, String notes, LocalDateTime createdAt) {
+                              String batchNumber, String status, String sideEffects, String notes, LocalDateTime createdAt) {
         this.vaccinationId = vaccinationId;
         this.memberId = memberId;
         this.templateId = templateId;
@@ -31,6 +33,7 @@ public class VaccinationRecords {
         this.nextDueDate = nextDueDate;
         this.batchNumber = batchNumber;
         this.status = status;
+        this.sideEffects = sideEffects;
         this.notes = notes;
         this.createdAt = createdAt;
     }
@@ -99,6 +102,14 @@ public class VaccinationRecords {
         this.status = status; 
     }
 
+     public String getSideEffects() {
+        return sideEffects;
+    }
+
+    public void setSideEffects(String sideEffects) {
+        this.sideEffects = sideEffects;
+    }
+
     public String getNotes() { 
         return notes; 
     }
@@ -127,5 +138,6 @@ public class VaccinationRecords {
                 "notes: " + notes + "\n" +
                 "createdAt: " + createdAt;
     }
+
 }
 
