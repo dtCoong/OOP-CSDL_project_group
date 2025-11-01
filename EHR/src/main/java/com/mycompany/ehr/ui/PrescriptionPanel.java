@@ -1,43 +1,61 @@
 package com.mycompany.ehr.ui;
 
 import com.mycompany.ehr.dao.PrescriptionDAO;
+import com.mycompany.ehr.dao.PrescriptionDetailDAO; 
+import com.mycompany.ehr.dao.MedicationScheduleDAO; 
 import com.mycompany.ehr.model.Prescription;
+import com.mycompany.ehr.model.PrescriptionDetail; 
+import com.mycompany.ehr.model.MedicationSchedule; 
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.math.BigDecimal;
+import java.awt.event.MouseAdapter; 
+import java.awt.event.MouseEvent; 
+import java.awt.event.MouseListener; 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PrescriptionPanel extends JPanel {
 
-    
     private final PrescriptionDAO prescriptionDAO;
+    private final PrescriptionDetailDAO detailDAO;
+    private final MedicationScheduleDAO scheduleDAO;
 
+    private JPanel mainDisplayPanel;
+    private JScrollPane mainScrollPane;
+    private JTextField txtSearchUserId;
+    private JButton btnSearch;
+    private JButton btnShowAll;
+    private final String[] prescriptionColumnNames = {
+        "Mã đơn thuốc", "Mã người nhà", "Ngày kê đơn",
+        "Chẩn đoán", "Ghi chú", "Chi phí", "Trạng thái",
+        "Ngày tạo", "Ngày cập nhật"
+    };
     
-    private JTable table;
-    private DefaultTableModel tableModel;
+    private JTable detailTable;
+    private DefaultTableModel detailTableModel;
+    // Đã thêm "Mã chi tiết"
+    private final String[] detailColumnNames = {
+        "Mã đơn thuốc chi tiết", "Mã thuốc", "Liều lượng", "Tần suất", "Số ngày", "Tổng SL",
+        "Hướng dẫn", "Bắt đầu", "Kết thúc", "Trạng thái"
+    };
 
-    private JTextField txtId;
-    private JSpinner spinMemberId;
-    private JSpinner spinAppointmentId;
-    private JSpinner spinDoctorId;
-    private JTextField txtPrescriptionDate;
-    private JTextArea txtDiagnosis;
-    private JTextArea txtNotes;
-    private JSpinner spinTotalCost;
-    private JComboBox<Prescription.PrescriptionStatus> cmbStatus;
-
-    private JButton btnAdd;
-    private JButton btnUpdate;
-    private JButton btnDelete;
-    private JButton btnClear;
+    private JTable scheduleTable;
+    private DefaultTableModel scheduleTableModel;
+    private final String[] scheduleColumnNames = {
+        "Mã đơn thuốc chi tiết", "Giờ uống", "Liều lượng/ngày", "Hoạt động"
+    };
 
     public PrescriptionPanel() {
         this.prescriptionDAO = new PrescriptionDAO();
-        setLayout(new BorderLayout(10, 10));
+        this.detailDAO = new PrescriptionDetailDAO();
+        this.scheduleDAO = new MedicationScheduleDAO();
+        
+        setLayout(new BorderLayout()); 
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         initComponents();
@@ -47,336 +65,259 @@ public class PrescriptionPanel extends JPanel {
 
     private void initComponents() {
         
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createTitledBorder("Thông tin Đơn thuốc"));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        gbc.gridx = 0; gbc.gridy = 0;
-        formPanel.add(new JLabel("ID:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        txtId = new JTextField(20);
-        txtId.setEditable(false);
-        formPanel.add(txtId, gbc);
-
-        gbc.gridx = 2; gbc.gridy = 0; gbc.weightx = 0;
-        formPanel.add(new JLabel("Ngày kê đơn (YYYY-MM-DD):"), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0;
-        txtPrescriptionDate = new JTextField(10);
-        formPanel.add(txtPrescriptionDate, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
-        formPanel.add(new JLabel("Member ID:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        spinMemberId = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
-        formPanel.add(spinMemberId, gbc);
-
-        gbc.gridx = 2; gbc.gridy = 1; gbc.weightx = 0;
-        formPanel.add(new JLabel("Appointment ID:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0;
-        spinAppointmentId = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
-        formPanel.add(spinAppointmentId, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
-        formPanel.add(new JLabel("Doctor ID:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        spinDoctorId = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
-        formPanel.add(spinDoctorId, gbc);
-
-        gbc.gridx = 2; gbc.gridy = 2; gbc.weightx = 0;
-        formPanel.add(new JLabel("Tổng chi phí:"), gbc);
-        gbc.gridx = 3; gbc.weightx = 1.0;
-        spinTotalCost = new JSpinner(new SpinnerNumberModel(0.0, 0.0, 1_000_000_000.0, 1000.0));
-        formPanel.add(spinTotalCost, gbc);
+        JPanel topPanel = new JPanel(new BorderLayout(10, 10));
         
-        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0;
-        formPanel.add(new JLabel("Trạng thái:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        cmbStatus = new JComboBox<>(Prescription.PrescriptionStatus.values());
-        formPanel.add(cmbStatus, gbc);
-
-        gbc.gridx = 0; gbc.gridy = 4; gbc.weightx = 0; gbc.anchor = GridBagConstraints.NORTHWEST;
-        formPanel.add(new JLabel("Chẩn đoán:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 4; gbc.gridwidth = 3;
-        gbc.fill = GridBagConstraints.BOTH; gbc.weighty = 1.0;
-        txtDiagnosis = new JTextArea(3, 20);
-        txtDiagnosis.setLineWrap(true);
-        txtDiagnosis.setWrapStyleWord(true);
-        formPanel.add(new JScrollPane(txtDiagnosis), gbc);
-
-        gbc.gridx = 0; gbc.gridy = 5; gbc.weightx = 0; gbc.anchor = GridBagConstraints.NORTHWEST;
-        formPanel.add(new JLabel("Ghi chú:"), gbc);
-        gbc.gridx = 1; gbc.gridy = 5; gbc.gridwidth = 3;
-        gbc.fill = GridBagConstraints.BOTH; gbc.weighty = 1.0;
-        txtNotes = new JTextArea(3, 20);
-        txtNotes.setLineWrap(true);
-        txtNotes.setWrapStyleWord(true);
-        formPanel.add(new JScrollPane(txtNotes), gbc);
-
-        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 4; gbc.fill = GridBagConstraints.NONE;
-        gbc.anchor = GridBagConstraints.CENTER; gbc.weighty = 0;
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        btnAdd = new JButton("Thêm");
-        btnUpdate = new JButton("Cập nhật");
-        btnDelete = new JButton("Xóa");
-        btnClear = new JButton("Làm mới");
-        buttonPanel.add(btnAdd);
-        buttonPanel.add(btnUpdate);
-        buttonPanel.add(btnDelete);
-        buttonPanel.add(btnClear);
-        formPanel.add(buttonPanel, gbc);
-
-       
-        String[] columnNames = {
-            "ID", "Member ID", "Appt ID", "Doctor ID", 
-            "Ngày kê đơn", "Chẩn đoán", "Ghi chú", "Chi phí", "Trạng thái",
-            "Ngày tạo", "Ngày cập nhật" // Thêm 2 cột
-        };
-
-        tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) { return false; }
-        };
-        table = new JTable(tableModel);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        searchPanel.add(new JLabel("Tìm theo mã người dùng:")); 
+        txtSearchUserId = new JTextField(10);
+        btnSearch = new JButton("Tìm");
+        btnShowAll = new JButton("Hiện tất cả");
+        searchPanel.add(txtSearchUserId);
+        searchPanel.add(btnSearch);
+        searchPanel.add(btnShowAll);
         
+        mainDisplayPanel = new JPanel();
+        mainDisplayPanel.setLayout(new BoxLayout(mainDisplayPanel, BoxLayout.Y_AXIS));
+        mainDisplayPanel.setBackground(Color.WHITE); 
+        mainScrollPane = new JScrollPane(mainDisplayPanel);
+        mainScrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách Đơn thuốc (Nhấp vào để xem chi tiết)"));
+        mainScrollPane.setPreferredSize(new Dimension(800, 250)); 
+        
+        topPanel.add(searchPanel, BorderLayout.NORTH);
+        topPanel.add(mainScrollPane, BorderLayout.CENTER);
+
+        detailTableModel = new DefaultTableModel(detailColumnNames, 0) {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        detailTable = new JTable(detailTableModel);
+        setupDetailTableColumns(detailTable);
+        JScrollPane detailScrollPane = new JScrollPane(detailTable);
+        detailScrollPane.setBorder(BorderFactory.createTitledBorder("1. Chi tiết thuốc kê đơn"));
+
+        scheduleTableModel = new DefaultTableModel(scheduleColumnNames, 0) {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        scheduleTable = new JTable(scheduleTableModel);
+        setupScheduleTableColumns(scheduleTable);
+        JScrollPane scheduleScrollPane = new JScrollPane(scheduleTable);
+        scheduleScrollPane.setBorder(BorderFactory.createTitledBorder("2. Lịch uống thuốc"));
+
+        JSplitPane bottomSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, detailScrollPane, scheduleScrollPane);
+        bottomSplitPane.setResizeWeight(0.6); 
+
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topPanel, bottomSplitPane);
+        mainSplitPane.setResizeWeight(0.5); 
+
+        add(mainSplitPane, BorderLayout.CENTER);
+    }
+    
+    private void addPrescriptionToTable(Prescription p, DefaultTableModel model) {
+        Object[] row = { p.getPrescriptionId(), p.getMemberId(), p.getPrescriptionDate(), 
+                         p.getDiagnosis(), p.getNotes(), p.getTotalCost(), p.getStatus(), 
+                         p.getCreatedAt(), p.getUpdatedAt() };
+        model.addRow(row);
+    }
+    private void setupPrescriptionTableColumns(JTable table) {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-        table.getColumnModel().getColumn(0).setPreferredWidth(40);  // ID
-        table.getColumnModel().getColumn(1).setPreferredWidth(80);  // Member ID
-        table.getColumnModel().getColumn(2).setPreferredWidth(60);  // Appt ID
-        table.getColumnModel().getColumn(3).setPreferredWidth(70);  // Doctor ID
-        table.getColumnModel().getColumn(4).setPreferredWidth(100); // Ngày
-        table.getColumnModel().getColumn(5).setPreferredWidth(200); // Chẩn đoán
-        table.getColumnModel().getColumn(6).setPreferredWidth(200); // Ghi chú
-        table.getColumnModel().getColumn(7).setPreferredWidth(80);  // Chi phí
-        table.getColumnModel().getColumn(8).setPreferredWidth(100); // Trạng thái
-        table.getColumnModel().getColumn(9).setPreferredWidth(140); // Ngày tạo
-        table.getColumnModel().getColumn(10).setPreferredWidth(140);// Ngày cập nhật
-        
-        JScrollPane scrollPane = new JScrollPane(table,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách Đơn thuốc"));
-        scrollPane.setPreferredSize(new Dimension(800, 250));
-
-        add(formPanel, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
+        table.getColumnModel().getColumn(0).setPreferredWidth(80);
+        table.getColumnModel().getColumn(1).setPreferredWidth(80);  
+        table.getColumnModel().getColumn(2).setPreferredWidth(100); 
+        table.getColumnModel().getColumn(3).setPreferredWidth(200); 
+        table.getColumnModel().getColumn(4).setPreferredWidth(200); 
+        table.getColumnModel().getColumn(5).setPreferredWidth(80);  
+        table.getColumnModel().getColumn(6).setPreferredWidth(100); 
+        table.getColumnModel().getColumn(7).setPreferredWidth(140); 
+        table.getColumnModel().getColumn(8).setPreferredWidth(140); 
+    }
+   
+    private void addDetailToTable(PrescriptionDetail d, DefaultTableModel model) {
+        Object[] row = {
+            d.getDetailId(),
+            d.getMedicationId(), 
+            d.getDosage(), d.getFrequency(), d.getDurationDays(),    
+            d.getTotalQuantity(), d.getInstructions(), d.getStartDate(),
+            d.getEndDate(), d.getStatus()     
+        };
+        model.addRow(row);
+    }
+   
+    private void setupDetailTableColumns(JTable table) {
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getColumnModel().getColumn(0).setPreferredWidth(70);  // Mã chi tiết
+        table.getColumnModel().getColumn(1).setPreferredWidth(60);  // Mã thuốc
+        table.getColumnModel().getColumn(2).setPreferredWidth(100); // Liều lượng
+        table.getColumnModel().getColumn(3).setPreferredWidth(100); // Tần suất
+        table.getColumnModel().getColumn(4).setPreferredWidth(60);  // Số ngày
+        table.getColumnModel().getColumn(5).setPreferredWidth(60);  // Tổng SL
+        table.getColumnModel().getColumn(6).setPreferredWidth(200); // Hướng dẫn
+        table.getColumnModel().getColumn(7).setPreferredWidth(100); // Bắt đầu
+        table.getColumnModel().getColumn(8).setPreferredWidth(100); // Kết thúc
+        table.getColumnModel().getColumn(9).setPreferredWidth(100); // Trạng thái
+    }
+    
+    private void addScheduleToTable(MedicationSchedule s, DefaultTableModel model) {
+        Object[] row = {
+            s.getDetailId(), s.getScheduledTime(), 
+            s.getDailyDosage(), s.isActive()
+        };
+        model.addRow(row);
+    }
+    private void setupScheduleTableColumns(JTable table) {
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.getColumnModel().getColumn(0).setPreferredWidth(80);  
+        table.getColumnModel().getColumn(1).setPreferredWidth(100); 
+        table.getColumnModel().getColumn(2).setPreferredWidth(120); 
+        table.getColumnModel().getColumn(3).setPreferredWidth(80);  
+    }
+    
+    private MouseListener createTableMouseListener() {
+        return new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                JTable table = (JTable)evt.getSource();
+                int row = table.rowAtPoint(evt.getPoint());
+                if (row >= 0) {
+                    int prescriptionId = (int)table.getModel().getValueAt(
+                            table.convertRowIndexToModel(row), 0);
+                    
+                    loadDetailTable(prescriptionId);
+                    loadScheduleTable(prescriptionId);
+                }
+            }
+        };
     }
 
     private void loadTableData() {
-        tableModel.setRowCount(0);
-        ArrayList<Prescription> list = prescriptionDAO.selectAll();
+        mainDisplayPanel.removeAll();
+        detailTableModel.setRowCount(0); 
+        scheduleTableModel.setRowCount(0); 
         
-        for (Prescription p : list) {
-            Object[] row = {
-                    p.getPrescriptionId(),
-                    p.getMemberId(),
-                    p.getAppointmentId(),
-                    p.getDoctorId(),
-                    p.getPrescriptionDate(),
-                    p.getDiagnosis(),
-                    p.getNotes(),
-                    p.getTotalCost(),
-                    p.getStatus(),
-                    p.getCreatedAt(),   
-                    p.getUpdatedAt()     
-            };
-            tableModel.addRow(row);
+        DefaultTableModel model = new DefaultTableModel(prescriptionColumnNames, 0) {
+            @Override public boolean isCellEditable(int row, int column) { return false; }
+        };
+        JTable table = new JTable(model);
+        setupPrescriptionTableColumns(table);
+        table.addMouseListener(createTableMouseListener()); 
+
+        ArrayList<Prescription> list = prescriptionDAO.selectAll();
+        if (list != null) {
+            for (Prescription p : list) {
+                addPrescriptionToTable(p, model);
+            }
         }
+        
+        mainDisplayPanel.add(table.getTableHeader());
+        mainDisplayPanel.add(table);
+        mainDisplayPanel.revalidate();
+        mainDisplayPanel.repaint();
     }
 
     private void addListeners() {
-        table.getSelectionModel().addListSelectionListener(e -> {
-            if (e.getValueIsAdjusting()) return;
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow == -1) {
-                clearForm();
-                return;
-            }
-            int modelRow = table.convertRowIndexToModel(selectedRow);
-            int id = (int) tableModel.getValueAt(modelRow, 0); 
-            
-            Prescription p = new Prescription();
-            p.setPrescriptionId(id);
-            Prescription fullPrescription = prescriptionDAO.selectById(p);
-            if (fullPrescription != null) {
-                populateForm(fullPrescription);
-            }
+        btnSearch.addActionListener(e -> searchByUserId()); 
+        btnShowAll.addActionListener(e -> {
+            txtSearchUserId.setText(""); 
+            loadTableData();
         });
-
-        btnAdd.addActionListener(e -> addPrescription());
-        btnUpdate.addActionListener(e -> updatePrescription());
-        btnDelete.addActionListener(e -> deletePrescription());
-        btnClear.addActionListener(e -> clearForm());
-    }
-
-    private void populateForm(Prescription p) {
-        txtId.setText(String.valueOf(p.getPrescriptionId()));
-        spinMemberId.setValue(p.getMemberId());
-        
-        spinAppointmentId.setValue(p.getAppointmentId() != null ? p.getAppointmentId() : 0);
-        spinDoctorId.setValue(p.getDoctorId() != null ? p.getDoctorId() : 0);
-
-        if (p.getPrescriptionDate() != null) {
-            txtPrescriptionDate.setText(p.getPrescriptionDate().toString());
-        } else {
-            txtPrescriptionDate.setText("");
-        }
-
-        txtDiagnosis.setText(p.getDiagnosis());
-        txtNotes.setText(p.getNotes());
-        
-        spinTotalCost.setValue(p.getTotalCost() != null ? p.getTotalCost().doubleValue() : 0.0);
-
-        for (Prescription.PrescriptionStatus s : Prescription.PrescriptionStatus.values()) {
-            if (s.getDisplayName().equals(p.getStatus())) {
-                cmbStatus.setSelectedItem(s);
-                break;
-            }
-        }
-    }
-
-    private Prescription getPrescriptionFromForm() throws DateTimeParseException {
-        Prescription p = new Prescription();
-        
-        if (txtId.getText() != null && !txtId.getText().isEmpty()) {
-            p.setPrescriptionId(Integer.parseInt(txtId.getText()));
-        }
-
-        p.setMemberId((Integer) spinMemberId.getValue());
-
-        int apptId = (Integer) spinAppointmentId.getValue();
-        p.setAppointmentId(apptId == 0 ? null : apptId);
-        
-        int docId = (Integer) spinDoctorId.getValue();
-        p.setDoctorId(docId == 0 ? null : docId);
-
-        p.setPrescriptionDate(LocalDate.parse(txtPrescriptionDate.getText()));
-
-        p.setDiagnosis(txtDiagnosis.getText());
-        p.setNotes(txtNotes.getText());
-
-        double cost = (Double) spinTotalCost.getValue();
-        p.setTotalCost(BigDecimal.valueOf(cost));
-
-        Prescription.PrescriptionStatus selectedStatus = (Prescription.PrescriptionStatus) cmbStatus.getSelectedItem();
-        p.setStatus(selectedStatus.name());
-
-        return p;
-    }
-
-    private void clearForm() {
-        txtId.setText("");
-        spinMemberId.setValue(1);
-        spinAppointmentId.setValue(0);
-        spinDoctorId.setValue(0);
-        txtPrescriptionDate.setText("");
-        txtDiagnosis.setText("");
-        txtNotes.setText("");
-        spinTotalCost.setValue(0.0);
-        cmbStatus.setSelectedIndex(0);
-        table.clearSelection();
     }
     
-    private boolean validateDate() {
-        try {
-            LocalDate.parse(txtPrescriptionDate.getText());
-            return true;
-        } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Ngày kê đơn không hợp lệ. Vui lòng nhập theo định dạng YYYY-MM-DD.",
-                    "Lỗi định dạng ngày",
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    }
-
-    private void addPrescription() {
-        if (!validateDate()) return;
-        
-        try {
-            Prescription p = getPrescriptionFromForm();
-            
-            int rowsAffected = prescriptionDAO.insert(p); 
-            
-            if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(this, "Thêm đơn thuốc thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                loadTableData();
-                clearForm();
-            } else {
-                
-                JOptionPane.showMessageDialog(this, "Thêm đơn thuốc thất bại. (DAO trả về 0 dòng)", "Lỗi Logic/CSDL", JOptionPane.ERROR_MESSAGE);
-            }
-            
-        } catch (DateTimeParseException e) {
-             JOptionPane.showMessageDialog(this, "Lỗi định dạng ngày tháng khi lấy dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi thêm đơn thuốc: " + e.getMessage(), "Lỗi Exception", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
-    private void updatePrescription() {
-        if (txtId.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn thuốc để cập nhật.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+    private void searchByUserId() { 
+        String idText = txtSearchUserId.getText().trim();
+        if (idText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mã người dùng để tìm kiếm.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if (!validateDate()) return;
-        
         try {
-            Prescription p = getPrescriptionFromForm();
-            
-            int rowsAffected = prescriptionDAO.update(p); 
-            
-            if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(this, "Cập nhật đơn thuốc thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                loadTableData();
-                clearForm();
-            } else {
-                JOptionPane.showMessageDialog(this, "Cập nhật thất bại. (DAO trả về 0 dòng)", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            int userId = Integer.parseInt(idText);
+            String condition = "member_id IN (SELECT member_id FROM Family_Members WHERE user_id = " + userId + ")";
+            ArrayList<Prescription> list = prescriptionDAO.selectByCondition(condition);
+
+            mainDisplayPanel.removeAll();
+            detailTableModel.setRowCount(0); 
+            scheduleTableModel.setRowCount(0); 
+
+            if (list == null || list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy đơn thuốc nào cho mã người dùng: " + userId, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                mainDisplayPanel.revalidate();
+                mainDisplayPanel.repaint();
+                return;
             }
             
-        } catch (DateTimeParseException e) {
-             JOptionPane.showMessageDialog(this, "Lỗi định dạng ngày tháng khi lấy dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật đơn thuốc: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
+            Map<LocalDate, List<Prescription>> groupedByDate = list.stream()
+                .collect(Collectors.groupingBy(Prescription::getPrescriptionDate));
 
-    private void deletePrescription() {
-        if (txtId.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một đơn thuốc để xóa.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Xóa đơn thuốc sẽ xóa TẤT CẢ chi tiết và lịch uống thuốc liên quan (do CASCADE). Bạn có chắc không?",
-                "Xác nhận xóa",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-        
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                Prescription p = new Prescription();
-                p.setPrescriptionId(Integer.parseInt(txtId.getText()));
-                
-                int rowsAffected = prescriptionDAO.delete(p);
-                
-                if(rowsAffected > 0) {
-                    JOptionPane.showMessageDialog(this, "Xóa đơn thuốc thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    loadTableData();
-                    clearForm();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Xóa thất bại. (DAO trả về 0 dòng)", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JLabel userLabel = new JLabel("Hiển thị đơn thuốc cho mã người dùng: " + userId);
+            userLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            userLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            mainDisplayPanel.add(userLabel);
+            mainDisplayPanel.add(Box.createRigidArea(new Dimension(0, 10))); 
+
+            List<LocalDate> sortedDates = groupedByDate.keySet().stream().sorted().collect(Collectors.toList());
+
+            for (LocalDate date : sortedDates) {
+                List<Prescription> dailyPrescriptions = groupedByDate.get(date);
+                JLabel dateLabel = new JLabel("Ngày kê đơn: " + date.toString());
+                dateLabel.setFont(new Font("Segoe UI", Font.ITALIC, 14));
+                dateLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                mainDisplayPanel.add(dateLabel);
+
+                DefaultTableModel model = new DefaultTableModel(prescriptionColumnNames, 0) {
+                    @Override public boolean isCellEditable(int row, int column) { return false; }
+                };
+                JTable table = new JTable(model);
+                setupPrescriptionTableColumns(table);
+                table.addMouseListener(createTableMouseListener()); 
+
+                for (Prescription p : dailyPrescriptions) {
+                    addPrescriptionToTable(p, model);
                 }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Lỗi khi xóa đơn thuốc: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+
+                table.getTableHeader().setAlignmentX(Component.LEFT_ALIGNMENT);
+                table.setAlignmentX(Component.LEFT_ALIGNMENT);
+                mainDisplayPanel.add(table.getTableHeader());
+                mainDisplayPanel.add(table);
+                mainDisplayPanel.add(Box.createRigidArea(new Dimension(0, 20))); 
             }
+
+            mainDisplayPanel.revalidate();
+            mainDisplayPanel.repaint();
+            SwingUtilities.invokeLater(() -> mainScrollPane.getVerticalScrollBar().setValue(0));
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã người dùng phải là một con số.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+             JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + e.getMessage(), "Lỗi SQL/DAO", JOptionPane.ERROR_MESSAGE);
+             e.printStackTrace();
+        }
+    }
+    
+    private void loadDetailTable(int prescriptionId) {
+        detailTableModel.setRowCount(0);
+        try {
+            String condition = "prescription_id = " + prescriptionId;
+            ArrayList<PrescriptionDetail> list = detailDAO.selectByCondition(condition);
+            if (list != null) {
+                for (PrescriptionDetail d : list) {
+                    addDetailToTable(d, detailTableModel);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải chi tiết đơn thuốc: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void loadScheduleTable(int prescriptionId) {
+        scheduleTableModel.setRowCount(0);
+        try {
+            String condition = "detail_id IN (SELECT detail_id FROM Prescription_Details WHERE prescription_id = " + prescriptionId + ")";
+            ArrayList<MedicationSchedule> list = scheduleDAO.selectByCondition(condition);
+            if (list != null) {
+                for (MedicationSchedule s : list) {
+                    addScheduleToTable(s, scheduleTableModel);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải lịch uống thuốc: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 }

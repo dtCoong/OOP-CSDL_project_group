@@ -41,45 +41,7 @@ public class PrescriptionDetailDAO implements DAOInterface<PrescriptionDetail> {
     
     @Override
     public int insert(PrescriptionDetail t) {
-        String sql = "INSERT INTO Prescription_Details (prescription_id, medication_id, dosage, " +
-                     "frequency, duration_days, total_quantity, instructions, " +
-                     "start_date, end_date, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        int newId = 0;
-
-        try {
-            conn = JDBCUtil.getConnection();
-            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-            pstmt.setInt(1, t.getPrescriptionId());
-            pstmt.setInt(2, t.getMedicationId());
-            pstmt.setString(3, t.getDosage());
-            pstmt.setString(4, t.getFrequency());
-            pstmt.setInt(5, t.getDurationDays());
-            pstmt.setInt(6, t.getTotalQuantity());
-            pstmt.setString(7, t.getInstructions());
-            pstmt.setDate(8, Date.valueOf(t.getStartDate()));
-            pstmt.setDate(9, Date.valueOf(t.getEndDate()));
-            pstmt.setString(10, t.getStatus()); 
-
-            pstmt.executeUpdate();
-
-            rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                newId = rs.getInt(1);
-                t.setDetailId(newId);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-            JDBCUtil.closeConnection(conn);
-        }
-        return newId;
+        return 0;
     }
 
     @Override
@@ -111,61 +73,12 @@ public class PrescriptionDetailDAO implements DAOInterface<PrescriptionDetail> {
 
     @Override
     public int update(PrescriptionDetail t) {
-        String sql = "UPDATE Prescription_Details SET prescription_id = ?, medication_id = ?, " +
-                     "dosage = ?, frequency = ?, duration_days = ?, total_quantity = ?, " +
-                     "instructions = ?, start_date = ?, end_date = ?, status = ? " +
-                     "WHERE detail_id = ?";
-        
-        int rowsAffected = 0;
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            conn = JDBCUtil.getConnection();
-            pstmt = conn.prepareStatement(sql);
-
-            pstmt.setInt(1, t.getPrescriptionId());
-            pstmt.setInt(2, t.getMedicationId());
-            pstmt.setString(3, t.getDosage());
-            pstmt.setString(4, t.getFrequency());
-            pstmt.setInt(5, t.getDurationDays());
-            pstmt.setInt(6, t.getTotalQuantity());
-            pstmt.setString(7, t.getInstructions());
-            pstmt.setDate(8, Date.valueOf(t.getStartDate()));
-            pstmt.setDate(9, Date.valueOf(t.getEndDate()));
-            pstmt.setString(10, t.getStatus());
-            pstmt.setInt(11, t.getDetailId());
-
-            rowsAffected = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-            JDBCUtil.closeConnection(conn);
-        }
-        return rowsAffected;
+        return 0;
     }
 
     @Override
     public int delete(PrescriptionDetail t) {
-        String sql = "DELETE FROM Prescription_Details WHERE detail_id = ?";
-        int rowsAffected = 0;
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            conn = JDBCUtil.getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, t.getDetailId());
-            
-            rowsAffected = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (pstmt != null) try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-            JDBCUtil.closeConnection(conn);
-        }
-        return rowsAffected;
+        return 0;
     }
 
     @Override
@@ -222,27 +135,6 @@ public class PrescriptionDetailDAO implements DAOInterface<PrescriptionDetail> {
 
     @Override
     public boolean exists(String condition) {
-        String sql = "SELECT EXISTS(SELECT 1 FROM Prescription_Details WHERE " + condition + ")";
-        boolean exists = false;
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = JDBCUtil.getConnection();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery(sql);
-            
-            if (rs.next()) {
-                exists = rs.getBoolean(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (stmt != null) try { stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-            JDBCUtil.closeConnection(conn);
-        }
-        return exists;
+        return false;
     }
 }
