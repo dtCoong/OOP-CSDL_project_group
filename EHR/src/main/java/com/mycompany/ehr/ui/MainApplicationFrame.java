@@ -10,10 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class MainApplicationFrame extends JFrame {
 
@@ -137,10 +135,10 @@ public class MainApplicationFrame extends JFrame {
         sidebar.setBackground(SIDEBAR_BACKGROUND);
         sidebar.setPreferredSize(new Dimension(240, 0));
         
-        JButton templatesButton = createSidebarButton("Quản lý Vaccine Templates", null);
+        JButton templatesButton = createSidebarButton("Các loại vaccine hiện có và Lịch tiêm chuẩn", null);
         templatesButton.addActionListener(e -> {
             cardLayout.show(contentPanel, "TEMPLATES");
-            headerLabel.setText("Quản lý Vaccine Templates");
+            headerLabel.setText("Các loại vaccine hiện có và Lịch tiêm chuẩn");
             headerLabel.setIcon(headerTemplateIcon); 
         });
         
@@ -170,14 +168,8 @@ public class MainApplicationFrame extends JFrame {
         buttonPanel.setOpaque(false);
 
         JButton reloadButton = createTextButton("Tải lại", "Tải lại danh sách");
-        JButton addButton = createTextButton("Thêm", "Thêm mới Template...");
-        JButton editButton = createTextButton("Sửa", "Chỉnh sửa Template đang chọn");
-        JButton deleteButton = createTextButton("Xóa", "Xóa Template đang chọn");
 
         buttonPanel.add(reloadButton);
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 10));
         searchPanel.setOpaque(false);
@@ -213,9 +205,6 @@ public class MainApplicationFrame extends JFrame {
         scrollPane.setBackground(MAIN_BACKGROUND);
 
         reloadButton.addActionListener(e -> loadTemplateData());
-        addButton.addActionListener(e -> addNewTemplate());
-        editButton.addActionListener(e -> editSelectedTemplate());
-        deleteButton.addActionListener(e -> deleteSelectedTemplate());
         searchButton.addActionListener(e -> searchTemplates(searchField.getText()));
 
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -235,14 +224,7 @@ public class MainApplicationFrame extends JFrame {
         buttonPanel.setOpaque(false);
 
         JButton reloadButton = createTextButton("Tải lại", "Tải lại danh sách");
-        JButton addButton = createTextButton("Thêm", "Thêm mới Hồ sơ...");
-        JButton editButton = createTextButton("Sửa", "Chỉnh sửa Hồ sơ đang chọn");
-        JButton deleteButton = createTextButton("Xóa", "Xóa Hồ sơ đang chọn");
-        
         buttonPanel.add(reloadButton);
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 10));
         searchPanel.setOpaque(false);
@@ -256,23 +238,39 @@ public class MainApplicationFrame extends JFrame {
         topPanel.add(searchPanel, BorderLayout.EAST);
         panel.add(topPanel, BorderLayout.NORTH);
 
-        String[] recordColumnNames = {"Vaccine ID", "Member ID", "Template ID", "Tên Vaccine", "Mũi số", "Ngày tiêm", "Ngày hẹn tiếp", "Số lô", "Trạng thái", "Ghi chú", "Ngày tạo"};
-        recordTableModel = new DefaultTableModel(recordColumnNames, 0) { @Override public boolean isCellEditable(int row, int column) { return false; }};
+       String[] recordColumnNames = {"Vaccine ID", "Member ID", "Template ID", "Tên Vaccine", "Mũi số", "Ngày tiêm", "Ngày hẹn tiếp", "Số lô", "Trạng thái", "Ghi chú", "Ngày tạo"};
+        recordTableModel = new DefaultTableModel(recordColumnNames, 0) { 
+            @Override 
+            public boolean isCellEditable(int row, int column) { 
+                return false; 
+            }
+        };
         recordTable = new JTable(recordTableModel);
         recordTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
-        recordTable.getColumnModel().getColumn(0).setPreferredWidth(80);
-        recordTable.getColumnModel().getColumn(1).setPreferredWidth(80);
-        recordTable.getColumnModel().getColumn(2).setPreferredWidth(80);
-        recordTable.getColumnModel().getColumn(3).setPreferredWidth(180);
-        recordTable.getColumnModel().getColumn(4).setPreferredWidth(70);
-        recordTable.getColumnModel().getColumn(5).setPreferredWidth(130);
-        recordTable.getColumnModel().getColumn(6).setPreferredWidth(130);
-        recordTable.getColumnModel().getColumn(7).setPreferredWidth(100);
-        recordTable.getColumnModel().getColumn(8).setPreferredWidth(100);
-        recordTable.getColumnModel().getColumn(9).setPreferredWidth(130);
-        recordTable.getColumnModel().getColumn(10).setPreferredWidth(180);
-        
+        // --- CẤU HÌNH ĐỘ RỘNG CỘT MỚI ---
+        recordTable.getColumnModel().getColumn(0).setPreferredWidth(80); // Vaccine ID
+
+        // === ẨN CỘT MEMBER ID (INDEX 1) ===
+        recordTable.getColumnModel().getColumn(1).setMinWidth(0);
+        recordTable.getColumnModel().getColumn(1).setMaxWidth(0);
+        recordTable.getColumnModel().getColumn(1).setPreferredWidth(0);
+
+        // === ẨN CỘT TEMPLATE ID (INDEX 2) ===
+        recordTable.getColumnModel().getColumn(2).setMinWidth(0);
+        recordTable.getColumnModel().getColumn(2).setMaxWidth(0);
+        recordTable.getColumnModel().getColumn(2).setPreferredWidth(0);
+
+        // === CÁC CỘT CÒN LẠI HIỂN THỊ BÌNH THƯỜNG (Bắt đầu từ index 3) ===
+        recordTable.getColumnModel().getColumn(3).setPreferredWidth(180); // Tên Vaccine
+        recordTable.getColumnModel().getColumn(4).setPreferredWidth(70);  // Mũi số
+        recordTable.getColumnModel().getColumn(5).setPreferredWidth(130); // Ngày tiêm
+        recordTable.getColumnModel().getColumn(6).setPreferredWidth(130); // Ngày hẹn tiếp
+        recordTable.getColumnModel().getColumn(7).setPreferredWidth(100); // Số lô
+        recordTable.getColumnModel().getColumn(8).setPreferredWidth(100); // Trạng thái
+        recordTable.getColumnModel().getColumn(9).setPreferredWidth(130); // Ghi chú
+        recordTable.getColumnModel().getColumn(10).setPreferredWidth(180); // Ngày tạo
+        // --- HẾT CẤU HÌNH ĐỘ RỘNG CỘT ---
         setupTableStyle(recordTable);
         
         JScrollPane scrollPane = new JScrollPane(recordTable);
@@ -280,9 +278,6 @@ public class MainApplicationFrame extends JFrame {
         scrollPane.setBackground(MAIN_BACKGROUND);
 
         reloadButton.addActionListener(e -> loadRecordData());
-        addButton.addActionListener(e -> addNewRecord());
-        editButton.addActionListener(e -> editSelectedRecord());
-        deleteButton.addActionListener(e -> deleteSelectedRecord());
         searchButton.addActionListener(e -> searchRecords(searchField.getText()));
 
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -324,100 +319,7 @@ public class MainApplicationFrame extends JFrame {
         }
     }
 
-    private void addNewTemplate() {
-        try {
-            JTextField nameField = new JTextField();
-            JTextField descField = new JTextField();
-            JTextField fromDaysField = new JTextField("0");
-            JTextField toDaysField = new JTextField("99999");
-            JTextField intervalField = new JTextField("0");
-            JTextField totalDosesField = new JTextField("1");
-            JTextField notesField = new JTextField();
-            Object[] message = { "Tên Vaccine:", nameField, "Mô tả:", descField, "Từ ngày tuổi:", fromDaysField, "Đến ngày tuổi:", toDaysField, "Khoảng cách (ngày):", intervalField, "Tổng liều:", totalDosesField, "Ghi chú:", notesField };
-            int option = JOptionPane.showConfirmDialog(this, message, "Thêm Vaccine mới", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            
-            if (option == JOptionPane.OK_OPTION) {
-                VaccineTemplates newTemplate = new VaccineTemplates();
-                newTemplate.setVaccineName(nameField.getText());
-                newTemplate.setDescription(descField.getText());
-                newTemplate.setAgeFromDays(Integer.parseInt(fromDaysField.getText()));
-                newTemplate.setAgeToDays(Integer.parseInt(toDaysField.getText()));
-                newTemplate.setIntervalDays(Integer.parseInt(intervalField.getText()));
-                newTemplate.setTotalDoses(Integer.parseInt(totalDosesField.getText()));
-                newTemplate.setNotes(notesField.getText());
-                newTemplate.setCreatedAt(LocalDateTime.now());
-                templateDao.insert(newTemplate);
-                loadTemplateData();
-                JOptionPane.showMessageDialog(this, "Thêm mới thành công!");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void editSelectedTemplate() {
-        try {
-            int selectedRow = templateTable.getSelectedRow();
-            if (selectedRow == -1) { JOptionPane.showMessageDialog(this, "Vui lòng chọn một mục để chỉnh sửa!"); return; }
-            Integer templateId = (Integer)templateTable.getValueAt(selectedRow, 0);
-            
-            VaccineTemplates tempQuery = new VaccineTemplates();
-            tempQuery.setVaccineTemplateId(templateId);
-            VaccineTemplates template = templateDao.selectById(tempQuery);
-
-            if (template == null) { JOptionPane.showMessageDialog(this, "Không tìm thấy dữ liệu."); loadTemplateData(); return; }
-
-            JTextField nameField = new JTextField(template.getVaccineName());
-            JTextField descField = new JTextField(template.getDescription());
-            JTextField fromDaysField = new JTextField(String.valueOf(template.getAgeFromDays()));
-            JTextField toDaysField = new JTextField(String.valueOf(template.getAgeToDays()));
-            JTextField intervalField = new JTextField(String.valueOf(template.getIntervalDays()));
-            JTextField totalDosesField = new JTextField(String.valueOf(template.getTotalDoses()));
-            JTextField notesField = new JTextField(template.getNotes());
-            Object[] message = { "Tên Vaccine:", nameField, "Mô tả:", descField, "Từ ngày tuổi:", fromDaysField, "Đến ngày tuổi:", toDaysField, "Khoảng cách (ngày):", intervalField, "Tổng liều:", totalDosesField, "Ghi chú:", notesField };
-            
-            int option = JOptionPane.showConfirmDialog(this, message, "Chỉnh sửa Vaccine (ID: " + templateId + ")", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (option == JOptionPane.OK_OPTION) {
-                template.setVaccineName(nameField.getText());
-                template.setDescription(descField.getText());
-                template.setAgeFromDays(Integer.parseInt(fromDaysField.getText()));
-                template.setAgeToDays(Integer.parseInt(toDaysField.getText()));
-                template.setIntervalDays(Integer.parseInt(intervalField.getText()));
-                template.setTotalDoses(Integer.parseInt(totalDosesField.getText()));
-                template.setNotes(notesField.getText());
-
-                templateDao.update(template);
-                loadTemplateData();
-                JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void deleteSelectedTemplate() {
-        try {
-            int[] selectedRows = templateTable.getSelectedRows();
-            if (selectedRows.length == 0) { JOptionPane.showMessageDialog(this, "Vui lòng chọn một hoặc nhiều mục để xóa!"); return; }
-            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa " + selectedRows.length + " mục đã chọn không?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (confirm != JOptionPane.YES_OPTION) { return; }
-
-            List<Integer> idsToDelete = new ArrayList<>();
-            for (int row : selectedRows) {
-                idsToDelete.add((Integer) templateTable.getValueAt(row, 0));
-            }
-
-            for (Integer templateId : idsToDelete) {
-                VaccineTemplates tempDelete = new VaccineTemplates();
-                tempDelete.setVaccineTemplateId(templateId);
-                templateDao.delete(tempDelete);
-            }
-            loadTemplateData();
-            JOptionPane.showMessageDialog(this, "Đã xóa " + idsToDelete.size() + " mục thành công!");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi xóa: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+   
 
     private void searchTemplates(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) { loadTemplateData(); return; }
@@ -454,115 +356,6 @@ public class MainApplicationFrame extends JFrame {
         return (template.getVaccineName() != null && template.getVaccineName().toLowerCase().contains(keyword)) ||
                (template.getDescription() != null && template.getDescription().toLowerCase().contains(keyword)) ||
                (template.getNotes() != null && template.getNotes().toLowerCase().contains(keyword));
-    }
-
-    private void addNewRecord() {
-        try {
-            JTextField memberIdField = new JTextField();
-            JTextField templateIdField = new JTextField();
-            JTextField vaccineNameField = new JTextField();
-            JTextField doseNumberField = new JTextField("1");
-            JTextField vaxDateField = new JTextField(LocalDate.now().toString());
-            JTextField nextDueDateField = new JTextField();
-            JTextField batchNumberField = new JTextField();
-            JTextField statusField = new JTextField("Đã tiêm");
-            JTextField notesField = new JTextField();
-            Object[] message = { "Member ID:", memberIdField, "Template ID:", templateIdField, "Tên Vaccine:", vaccineNameField, "Mũi số:", doseNumberField, "Ngày tiêm (YYYY-MM-DD):", vaxDateField, "Ngày hẹn tiếp (YYYY-MM-DD):", nextDueDateField, "Số lô:", batchNumberField, "Trạng thái:", statusField, "Ghi chú:", notesField };
-            
-            int option = JOptionPane.showConfirmDialog(this, message, "Thêm Hồ sơ Tiêm chủng mới", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (option == JOptionPane.OK_OPTION) {
-                VaccinationRecords newRecord = new VaccinationRecords();
-                newRecord.setMemberId(Integer.parseInt(memberIdField.getText()));
-                String templateIdStr = templateIdField.getText();
-                newRecord.setTemplateId((templateIdStr != null && !templateIdStr.trim().isEmpty()) ? Integer.parseInt(templateIdStr) : null);
-                newRecord.setVaccineName(vaccineNameField.getText());
-                newRecord.setDoseNumber(Integer.parseInt(doseNumberField.getText()));
-                newRecord.setVaccinationDate(LocalDate.parse(vaxDateField.getText()));
-                String nextDueDateStr = nextDueDateField.getText();
-                newRecord.setNextDueDate((nextDueDateStr != null && !nextDueDateStr.trim().isEmpty()) ? LocalDate.parse(nextDueDateStr) : null);
-                newRecord.setBatchNumber(batchNumberField.getText());
-                newRecord.setStatus(statusField.getText());
-                newRecord.setNotes(notesField.getText());
-                newRecord.setCreatedAt(LocalDateTime.now());
-                
-                recordDao.insert(newRecord);
-                
-                loadRecordData();
-                JOptionPane.showMessageDialog(this, "Thêm hồ sơ thành công!");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void editSelectedRecord() {
-        try {
-            int selectedRow = recordTable.getSelectedRow();
-            if (selectedRow == -1) { JOptionPane.showMessageDialog(this, "Vui lòng chọn một hồ sơ để chỉnh sửa!"); return; }
-            Integer recordId = (Integer)recordTable.getValueAt(selectedRow, 0);
-            
-            VaccinationRecords tempQuery = new VaccinationRecords();
-            tempQuery.setVaccinationId(recordId);
-            VaccinationRecords record = recordDao.selectById(tempQuery);
-
-            if (record == null) { JOptionPane.showMessageDialog(this, "Không tìm thấy dữ liệu."); loadRecordData(); return; }
-            
-            JTextField memberIdField = new JTextField(String.valueOf(record.getMemberId()));
-            JTextField templateIdField = new JTextField(record.getTemplateId() != null ? String.valueOf(record.getTemplateId()) : "");
-            JTextField vaccineNameField = new JTextField(record.getVaccineName());
-            JTextField doseNumberField = new JTextField(String.valueOf(record.getDoseNumber()));
-            JTextField vaxDateField = new JTextField(record.getVaccinationDate() != null ? record.getVaccinationDate().toString() : "");
-            JTextField nextDueDateField = new JTextField(record.getNextDueDate() != null ? record.getNextDueDate().toString() : "");
-            JTextField batchNumberField = new JTextField(record.getBatchNumber());
-            JTextField statusField = new JTextField(record.getStatus());
-            JTextField notesField = new JTextField(record.getNotes());
-            Object[] message = { "Member ID:", memberIdField, "Template ID:", templateIdField, "Tên Vaccine:", vaccineNameField, "Mũi số:", doseNumberField, "Ngày tiêm (YYYY-MM-DD):", vaxDateField, "Ngày hẹn tiếp (YYYY-MM-DD):", nextDueDateField, "Số lô:", batchNumberField, "Trạng thái:", statusField, "Ghi chú:", notesField };
-            
-            int option = JOptionPane.showConfirmDialog(this, message, "Chỉnh sửa Hồ sơ (ID: " + recordId + ")", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (option == JOptionPane.OK_OPTION) {
-                record.setMemberId(Integer.parseInt(memberIdField.getText()));
-                String templateIdStr = templateIdField.getText();
-                record.setTemplateId((templateIdStr != null && !templateIdStr.trim().isEmpty()) ? Integer.parseInt(templateIdStr) : null);
-                record.setVaccineName(vaccineNameField.getText());
-                record.setDoseNumber(Integer.parseInt(doseNumberField.getText()));
-                record.setVaccinationDate(LocalDate.parse(vaxDateField.getText()));
-                String nextDueDateStr = nextDueDateField.getText();
-                record.setNextDueDate((nextDueDateStr != null && !nextDueDateStr.trim().isEmpty()) ? LocalDate.parse(nextDueDateStr) : null);
-                record.setBatchNumber(batchNumberField.getText());
-                record.setStatus(statusField.getText());
-                record.setNotes(notesField.getText());
-
-                recordDao.update(record);
-                loadRecordData();
-                JOptionPane.showMessageDialog(this, "Cập nhật hồ sơ thành công!");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void deleteSelectedRecord() {
-        try {
-            int[] selectedRows = recordTable.getSelectedRows();
-            if (selectedRows.length == 0) { JOptionPane.showMessageDialog(this, "Vui lòng chọn một hoặc nhiều hồ sơ để xóa!"); return; }
-            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa " + selectedRows.length + " hồ sơ đã chọn không?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (confirm != JOptionPane.YES_OPTION) { return; }
-            
-            List<Integer> idsToDelete = new ArrayList<>();
-            for (int row : selectedRows) {
-                idsToDelete.add((Integer) recordTable.getValueAt(row, 0));
-            }
-            
-            for (Integer recordId : idsToDelete) {
-                VaccinationRecords tempDelete = new VaccinationRecords();
-                tempDelete.setVaccinationId(recordId);
-                recordDao.delete(tempDelete);
-            }
-            loadRecordData();
-            JOptionPane.showMessageDialog(this, "Đã xóa " + idsToDelete.size() + " hồ sơ thành công!");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi xóa: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     private void searchRecords(String keyword) {
