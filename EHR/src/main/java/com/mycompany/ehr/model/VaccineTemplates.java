@@ -3,116 +3,57 @@ package com.mycompany.ehr.model;
 import java.time.LocalDateTime;
 
 public class VaccineTemplates {
-    private int vaccineTemplateId;   
-    private String vaccineName;      
-    private String description;      
-    private int ageFromDays;         
-    private int ageToDays;           
-    private int intervalDays;        
-    private int totalDoses;          
-    private String notes;            
-    private LocalDateTime createdAt; 
+    private int template_id;
+    private String vaccine_name;
+    private String description;
+    private int age_from_days;
+    private Integer age_to_days; 
+    private Integer interval_days; 
+    private int total_doses;
+    private String notes;
+    private LocalDateTime created_at;
 
+    
+    public VaccineTemplates() {}
 
-    public VaccineTemplates(){}
-
-    public VaccineTemplates(int vaccineTemplateId, String vaccineName, String description,
-                           int ageFromDays, int ageToDays, int intervalDays,
-                           int totalDoses, String notes, LocalDateTime createdAt){
-        this.vaccineTemplateId = vaccineTemplateId;
-        this.vaccineName = vaccineName;
+    public VaccineTemplates(int template_id, String vaccine_name, String description, int age_from_days, Integer age_to_days, Integer interval_days, int total_doses, String notes, LocalDateTime created_at) {
+        this.template_id = template_id;
+        this.vaccine_name = vaccine_name;
         this.description = description;
-        this.ageFromDays = ageFromDays;
-        this.ageToDays = ageToDays;
-        this.intervalDays = intervalDays;
-        this.totalDoses = totalDoses;
+        this.age_from_days = age_from_days;
+        this.age_to_days = age_to_days;
+        this.interval_days = interval_days;
+        this.total_doses = total_doses;
         this.notes = notes;
-        this.createdAt = createdAt;
+        this.created_at = created_at;
     }
+    
+
+    public int getTemplate_id() { return template_id; }
+    public void setTemplate_id(int template_id) { this.template_id = template_id; }
+
+    public String getVaccine_name() { return vaccine_name; }
+    public void setVaccine_name(String vaccine_name) { this.vaccine_name = vaccine_name; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public int getAge_from_days() { return age_from_days; }
+    public void setAge_from_days(int age_from_days) { this.age_from_days = age_from_days; }
+
+    public Integer getAge_to_days() { return age_to_days; }
+    public void setAge_to_days(Integer age_to_days) { this.age_to_days = age_to_days; }
+
+    public Integer getInterval_days() { return interval_days; }
+    public void setInterval_days(Integer interval_days) { this.interval_days = interval_days; }
+
+    public int getTotal_doses() { return total_doses; }
+    public void setTotal_doses(int total_doses) { this.total_doses = total_doses; }
 
 
-    public int getVaccineTemplateId() {
-        return vaccineTemplateId;
-    }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 
-    public void setVaccineTemplateId(int vaccineTemplateId) {
-        this.vaccineTemplateId = vaccineTemplateId;
-    }
-
-    public String getVaccineName() {
-        return vaccineName;
-    }
-
-    public void setVaccineName(String vaccineName) {
-        this.vaccineName = vaccineName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getAgeFromDays() {
-        return ageFromDays;
-    }
-
-    public void setAgeFromDays(int ageFromDays) {
-        this.ageFromDays = ageFromDays;
-    }
-
-    public int getAgeToDays() {
-        return ageToDays;
-    }
-
-    public void setAgeToDays(int ageToDays) {
-        this.ageToDays = ageToDays;
-    }
-
-    public int getIntervalDays() {
-        return intervalDays;
-    }
-
-    public void setIntervalDays(int intervalDays) {
-        this.intervalDays = intervalDays;
-    }
-
-    public int getTotalDoses() {
-        return totalDoses;
-    }
-
-    public void setTotalDoses(int totalDoses) {
-        this.totalDoses = totalDoses;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-
-    public String toString() {
-        return  "vaccineTemplateId: " + vaccineTemplateId + "\n" +
-                "vaccineName: " + vaccineName + '\'' + "\n" +
-                "description: " + description + '\'' + "\n" +
-                "ageFromDays: " + ageFromDays + "\n" +
-                "ageToDays: " + ageToDays + "\n" +
-                "intervalDays: " + intervalDays + "\n" +
-                "totalDoses: " + totalDoses + "\n" +
-                "notes: " + notes + "\n" +
-                "createdAt: " + createdAt + "\n" ;
-    }
+    public LocalDateTime getCreated_at() { return created_at; }
+    public void setCreated_at(LocalDateTime created_at) { this.created_at = created_at; }
 }

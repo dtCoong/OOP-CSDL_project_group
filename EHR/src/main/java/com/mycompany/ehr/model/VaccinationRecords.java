@@ -1,143 +1,74 @@
 package com.mycompany.ehr.model;
 
-
-import java.time.LocalDateTime;
 import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 
 public class VaccinationRecords {
-    private int vaccinationId;        
-    private int memberId;             
-    private Integer templateId;       
-    private String vaccineName;       
-    private int doseNumber;           
-    private LocalDate vaccinationDate;
-    private LocalDate nextDueDate;    
-    private String batchNumber;       
+    private int vaccination_id;
+    private int member_id;
+    private Integer template_id;
+    private String vaccine_name;
+    private int dose_number;
+    private LocalDate vaccination_date;
+    private LocalDate next_due_date;
+    private String batch_number;
     private String status;
-    private String sideEffects;            
-    private String notes;             
-    private LocalDateTime createdAt;  
-    
+    private String side_effects;
+    private String notes;
+    private LocalDateTime created_at;
+
     public VaccinationRecords() {}
 
-    public VaccinationRecords(int vaccinationId, int memberId, Integer templateId, String vaccineName,
-                              int doseNumber, LocalDate vaccinationDate, LocalDate nextDueDate,
-                              String batchNumber, String status, String sideEffects, String notes, LocalDateTime createdAt) {
-        this.vaccinationId = vaccinationId;
-        this.memberId = memberId;
-        this.templateId = templateId;
-        this.vaccineName = vaccineName;
-        this.doseNumber = doseNumber;
-        this.vaccinationDate = vaccinationDate;
-        this.nextDueDate = nextDueDate;
-        this.batchNumber = batchNumber;
+    public VaccinationRecords(int vaccination_id, int member_id, Integer template_id, String vaccine_name, int dose_number, LocalDate vaccination_date, LocalDate next_due_date, String batch_number, String status, String side_effects, String notes, LocalDateTime created_at) {
+        this.vaccination_id = vaccination_id;
+        this.member_id = member_id;
+        this.template_id = template_id;
+        this.vaccine_name = vaccine_name;
+        this.dose_number = dose_number;
+        this.vaccination_date = vaccination_date;
+        this.next_due_date = next_due_date;
+        this.batch_number = batch_number;
         this.status = status;
-        this.sideEffects = sideEffects;
+        this.side_effects = side_effects; 
         this.notes = notes;
-        this.createdAt = createdAt;
+        this.created_at = created_at;
     }
 
 
-    public int getVaccinationId(){ 
-        return vaccinationId; 
-    }
-    public void setVaccinationId(int vaccinationId){ 
-        this.vaccinationId = vaccinationId; 
-    }
+    public int getVaccination_id() { return vaccination_id; }
+    public void setVaccination_id(int vaccination_id) { this.vaccination_id = vaccination_id; }
 
-    public int getMemberId() { 
-        return memberId; 
-    }
-    public void setMemberId(int memberId) { 
-        this.memberId = memberId; 
-    }
+    public int getMember_id() { return member_id; }
+    public void setMember_id(int member_id) { this.member_id = member_id; }
 
-    public Integer getTemplateId() { 
-        return templateId; 
-    }
-    public void setTemplateId(Integer templateId) { 
-        this.templateId = templateId; 
-    }
+    public Integer getTemplate_id() { return template_id; }
+    public void setTemplate_id(Integer template_id) { this.template_id = template_id; }
 
-    public String getVaccineName() { 
-        return vaccineName; 
-    }
-    public void setVaccineName(String vaccineName) { 
-        this.vaccineName = vaccineName; 
-    }
+    public String getVaccine_name() { return vaccine_name; }
+    public void setVaccine_name(String vaccine_name) { this.vaccine_name = vaccine_name; }
 
-    public int getDoseNumber() { 
-        return doseNumber; 
-    }
-    public void setDoseNumber(int doseNumber) { 
-        this.doseNumber = doseNumber; 
-    }
+    public int getDose_number() { return dose_number; }
+    public void setDose_number(int dose_number) { this.dose_number = dose_number; }
 
-    public LocalDate getVaccinationDate() { 
-        return vaccinationDate; 
-    }
-    public void setVaccinationDate(LocalDate vaccinationDate) { 
-        this.vaccinationDate = vaccinationDate; 
-    }
+    public LocalDate getVaccination_date() { return vaccination_date; }
+    public void setVaccination_date(LocalDate vaccination_date) { this.vaccination_date = vaccination_date; }
 
-    public LocalDate getNextDueDate() { 
-        return nextDueDate; 
-    }
-    public void setNextDueDate(LocalDate nextDueDate) { 
-        this.nextDueDate = nextDueDate; 
-    }
+    public LocalDate getNext_due_date() { return next_due_date; }
+    public void setNext_due_date(LocalDate next_due_date) { this.next_due_date = next_due_date; }
 
-    public String getBatchNumber() { 
-        return batchNumber; 
-    }
-    public void setBatchNumber(String batchNumber) { 
-        this.batchNumber = batchNumber; 
-    }
-
-    public String getStatus() { 
-        return status; 
-    }
-    public void setStatus(String status) { 
-        this.status = status; 
-    }
-
-     public String getSideEffects() {
-        return sideEffects;
-    }
-
-    public void setSideEffects(String sideEffects) {
-        this.sideEffects = sideEffects;
-    }
-
-    public String getNotes() { 
-        return notes; 
-    }
-    public void setNotes(String notes) { 
-        this.notes = notes; 
-    }
-
-    public LocalDateTime getCreatedAt() { 
-        return createdAt; 
-    }
-    public void setCreatedAt(LocalDateTime createdAt) { 
-        this.createdAt = createdAt; 
-    }
+    public String getBatch_number() { return batch_number; }
+    public void setBatch_number(String batch_number) { this.batch_number = batch_number; }
 
 
-    public String toString() {
-        return  "vaccinationId: " + vaccinationId + "\n" +
-                "memberId: " + memberId + "\n" +
-                "templateId: " + templateId + "\n" +
-                "vaccineName: " + vaccineName + '\n' +
-                "doseNumber: " + doseNumber + "\n" +
-                "vaccinationDate: " + vaccinationDate + "\n" +
-                "nextDueDate: " + nextDueDate + "\n" +
-                "batchNumber: " + batchNumber + "\n" +
-                "status: " + status + "\n" +
-                "notes: " + notes + "\n" +
-                "createdAt: " + createdAt;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
+    public String getSide_effects() { return side_effects; } 
+    public void setSide_effects(String side_effects) { this.side_effects = side_effects; } 
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public LocalDateTime getCreated_at() { return created_at; }
+    public void setCreated_at(LocalDateTime created_at) { this.created_at = created_at; }
 }
-

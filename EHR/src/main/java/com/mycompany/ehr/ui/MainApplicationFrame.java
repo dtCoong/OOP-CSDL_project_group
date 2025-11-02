@@ -12,7 +12,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 
-
 public class MainApplicationFrame extends JFrame {
 
     private VaccineTemplatesDao templateDao;
@@ -24,7 +23,6 @@ public class MainApplicationFrame extends JFrame {
     private final Color SIDEBAR_BACKGROUND = new Color(41, 128, 185); 
     private final Color SIDEBAR_TEXT_COLOR = new Color(255, 255, 255); 
     private final Color SIDEBAR_HOVER_COLOR = new Color(31, 97, 141);  
-
     private final Color MAIN_BACKGROUND = new Color(245, 245, 245);
     private final Color HEADER_BACKGROUND = new Color(255, 255, 255);
     private final Color TABLE_HEADER_BACKGROUND = new Color(230, 230, 230);
@@ -40,7 +38,7 @@ public class MainApplicationFrame extends JFrame {
     
   
     private ImageIcon headerTemplateIcon, headerRecordIcon; 
-
+    
 
     public MainApplicationFrame(VaccineTemplatesDao templateDao, VaccinationRecordsDao recordDao) {
         this.templateDao = templateDao;
@@ -86,8 +84,9 @@ public class MainApplicationFrame extends JFrame {
         
         
         cardLayout.show(contentPanel, "TEMPLATES");
-        headerLabel.setText("Quản lý Vaccine Templates");
+        headerLabel.setText("Các loại vaccine hiện có và Lịch tiêm chuẩn");
         headerLabel.setIcon(headerTemplateIcon); 
+        
     }
     
 
@@ -137,6 +136,7 @@ public class MainApplicationFrame extends JFrame {
         
         JButton templatesButton = createSidebarButton("Các loại vaccine hiện có và Lịch tiêm chuẩn", null);
         templatesButton.addActionListener(e -> {
+            
             cardLayout.show(contentPanel, "TEMPLATES");
             headerLabel.setText("Các loại vaccine hiện có và Lịch tiêm chuẩn");
             headerLabel.setIcon(headerTemplateIcon); 
@@ -144,6 +144,7 @@ public class MainApplicationFrame extends JFrame {
         
         JButton recordsButton = createSidebarButton("Quản lý Hồ sơ Tiêm chủng", null);
         recordsButton.addActionListener(e -> {
+            
             cardLayout.show(contentPanel, "RECORDS");
             headerLabel.setText("Quản lý Hồ sơ Tiêm chủng");
             headerLabel.setIcon(headerRecordIcon); 
@@ -168,7 +169,6 @@ public class MainApplicationFrame extends JFrame {
         buttonPanel.setOpaque(false);
 
         JButton reloadButton = createTextButton("Tải lại", "Tải lại danh sách");
-
         buttonPanel.add(reloadButton);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 10));
@@ -176,6 +176,8 @@ public class MainApplicationFrame extends JFrame {
         JTextField searchField = new JTextField(20);
         searchField.setPreferredSize(new Dimension(200, 30));
         JButton searchButton = createTextButton("Tìm", "Tìm kiếm");
+        
+        searchPanel.add(new JLabel("Tìm kiếm:")); 
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
 
@@ -231,6 +233,8 @@ public class MainApplicationFrame extends JFrame {
         JTextField searchField = new JTextField(20);
         searchField.setPreferredSize(new Dimension(200, 30));
         JButton searchButton = createTextButton("Tìm", "Tìm kiếm");
+        
+        searchPanel.add(new JLabel("Tìm kiếm:"));
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
 
@@ -238,7 +242,7 @@ public class MainApplicationFrame extends JFrame {
         topPanel.add(searchPanel, BorderLayout.EAST);
         panel.add(topPanel, BorderLayout.NORTH);
 
-       String[] recordColumnNames = {"Vaccine ID", "Member ID", "Template ID", "Tên Vaccine", "Mũi số", "Ngày tiêm", "Ngày hẹn tiếp", "Số lô", "Trạng thái", "Ghi chú", "Ngày tạo"};
+       String[] recordColumnNames = {"Vaccine ID", "Member ID", "Template ID", "Tên Vaccine", "Mũi số", "Ngày tiêm", "Ngày hẹn tiếp", "Số lô", "Trạng thái", "Phản ứng phụ", "Ghi chú", "Ngày tạo"};
         recordTableModel = new DefaultTableModel(recordColumnNames, 0) { 
             @Override 
             public boolean isCellEditable(int row, int column) { 
@@ -248,29 +252,26 @@ public class MainApplicationFrame extends JFrame {
         recordTable = new JTable(recordTableModel);
         recordTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
-        // --- CẤU HÌNH ĐỘ RỘNG CỘT MỚI ---
-        recordTable.getColumnModel().getColumn(0).setPreferredWidth(80); // Vaccine ID
+        recordTable.getColumnModel().getColumn(0).setPreferredWidth(80); 
 
-        // === ẨN CỘT MEMBER ID (INDEX 1) ===
         recordTable.getColumnModel().getColumn(1).setMinWidth(0);
         recordTable.getColumnModel().getColumn(1).setMaxWidth(0);
         recordTable.getColumnModel().getColumn(1).setPreferredWidth(0);
 
-        // === ẨN CỘT TEMPLATE ID (INDEX 2) ===
         recordTable.getColumnModel().getColumn(2).setMinWidth(0);
         recordTable.getColumnModel().getColumn(2).setMaxWidth(0);
         recordTable.getColumnModel().getColumn(2).setPreferredWidth(0);
 
-        // === CÁC CỘT CÒN LẠI HIỂN THỊ BÌNH THƯỜNG (Bắt đầu từ index 3) ===
-        recordTable.getColumnModel().getColumn(3).setPreferredWidth(180); // Tên Vaccine
-        recordTable.getColumnModel().getColumn(4).setPreferredWidth(70);  // Mũi số
-        recordTable.getColumnModel().getColumn(5).setPreferredWidth(130); // Ngày tiêm
-        recordTable.getColumnModel().getColumn(6).setPreferredWidth(130); // Ngày hẹn tiếp
-        recordTable.getColumnModel().getColumn(7).setPreferredWidth(100); // Số lô
-        recordTable.getColumnModel().getColumn(8).setPreferredWidth(100); // Trạng thái
-        recordTable.getColumnModel().getColumn(9).setPreferredWidth(130); // Ghi chú
-        recordTable.getColumnModel().getColumn(10).setPreferredWidth(180); // Ngày tạo
-        // --- HẾT CẤU HÌNH ĐỘ RỘNG CỘT ---
+        recordTable.getColumnModel().getColumn(3).setPreferredWidth(180); 
+        recordTable.getColumnModel().getColumn(4).setPreferredWidth(70);  
+        recordTable.getColumnModel().getColumn(5).setPreferredWidth(130); 
+        recordTable.getColumnModel().getColumn(6).setPreferredWidth(130); 
+        recordTable.getColumnModel().getColumn(7).setPreferredWidth(100); 
+        recordTable.getColumnModel().getColumn(8).setPreferredWidth(100); 
+        recordTable.getColumnModel().getColumn(9).setPreferredWidth(120);
+        recordTable.getColumnModel().getColumn(10).setPreferredWidth(130); 
+        recordTable.getColumnModel().getColumn(11).setPreferredWidth(180); 
+        
         setupTableStyle(recordTable);
         
         JScrollPane scrollPane = new JScrollPane(recordTable);
@@ -285,16 +286,25 @@ public class MainApplicationFrame extends JFrame {
     }
 
 
+    
 
     private void loadTemplateData() {
         try {
             templateTableModel.setRowCount(0);
+            
             ArrayList<VaccineTemplates> templates = templateDao.selectAll();
+            
             for (VaccineTemplates t : templates) {
                 templateTableModel.addRow(new Object[] {
-                    t.getVaccineTemplateId(), t.getVaccineName(), t.getDescription(),
-                    t.getAgeFromDays(), t.getAgeToDays(), t.getIntervalDays(),
-                    t.getTotalDoses(), t.getNotes(), t.getCreatedAt()
+                    t.getTemplate_id(),
+                    t.getVaccine_name(),
+                    t.getDescription(),
+                    t.getAge_from_days(),
+                    t.getAge_to_days(),
+                    t.getInterval_days(),
+                    t.getTotal_doses(),
+                    t.getNotes(),
+                    t.getCreated_at()
                 });
             }
         } catch (Exception e) {
@@ -305,13 +315,23 @@ public class MainApplicationFrame extends JFrame {
     private void loadRecordData() {
         try {
             recordTableModel.setRowCount(0);
+            
             ArrayList<VaccinationRecords> records = recordDao.selectAll();
+            
             for (VaccinationRecords r : records) {
                 recordTableModel.addRow(new Object[] {
-                    r.getVaccinationId(), r.getMemberId(), r.getTemplateId(),
-                    r.getVaccineName(), r.getDoseNumber(), r.getVaccinationDate(),
-                    r.getNextDueDate(), r.getBatchNumber(), r.getStatus(),
-                    r.getNotes(), r.getCreatedAt()
+                    r.getVaccination_id(),
+                    r.getMember_id(),
+                    r.getTemplate_id(),
+                    r.getVaccine_name(),
+                    r.getDose_number(),
+                    r.getVaccination_date(),
+                    r.getNext_due_date(),
+                    r.getBatch_number(),
+                    r.getStatus(),
+                    r.getSide_effects(),
+                    r.getNotes(),
+                    r.getCreated_at()
                 });
             }
         } catch (Exception e) {
@@ -320,7 +340,6 @@ public class MainApplicationFrame extends JFrame {
     }
 
    
-
     private void searchTemplates(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) { loadTemplateData(); return; }
         try {
@@ -331,9 +350,15 @@ public class MainApplicationFrame extends JFrame {
             for (VaccineTemplates t : allTemplates) {
                 if (matchesKeyword(t, keyword)) {
                     templateTableModel.addRow(new Object[] {
-                        t.getVaccineTemplateId(), t.getVaccineName(), t.getDescription(),
-                        t.getAgeFromDays(), t.getAgeToDays(), t.getIntervalDays(),
-                        t.getTotalDoses(), t.getNotes(), t.getCreatedAt()
+                        t.getTemplate_id(),
+                        t.getVaccine_name(),
+                        t.getDescription(),
+                        t.getAge_from_days(),
+                        t.getAge_to_days(),
+                        t.getInterval_days(),
+                        t.getTotal_doses(),
+                        t.getNotes(),
+                        t.getCreated_at()
                     });
                 }
             }
@@ -346,14 +371,14 @@ public class MainApplicationFrame extends JFrame {
         try {
             int searchId = Integer.parseInt(keyword);
             VaccineTemplates tempQuery = new VaccineTemplates();
-            tempQuery.setVaccineTemplateId(searchId);
+            tempQuery.setTemplate_id(searchId);
             VaccineTemplates templateById = templateDao.selectById(tempQuery);
-            if (templateById != null && template.getVaccineTemplateId() == templateById.getVaccineTemplateId()) {
+            if (templateById != null && template.getTemplate_id() == templateById.getTemplate_id()) {
                 return true;
             }
         } catch (NumberFormatException e) { /* Ignore */ }
         
-        return (template.getVaccineName() != null && template.getVaccineName().toLowerCase().contains(keyword)) ||
+        return (template.getVaccine_name() != null && template.getVaccine_name().toLowerCase().contains(keyword)) ||
                (template.getDescription() != null && template.getDescription().toLowerCase().contains(keyword)) ||
                (template.getNotes() != null && template.getNotes().toLowerCase().contains(keyword));
     }
@@ -367,10 +392,18 @@ public class MainApplicationFrame extends JFrame {
             for (VaccinationRecords r : allRecords) {
                 if (matchesKeyword(r, keyword)) {
                     recordTableModel.addRow(new Object[] {
-                        r.getVaccinationId(), r.getMemberId(), r.getTemplateId(),
-                        r.getVaccineName(), r.getDoseNumber(), r.getVaccinationDate(),
-                        r.getNextDueDate(), r.getBatchNumber(), r.getStatus(),
-                        r.getNotes(), r.getCreatedAt()
+                        r.getVaccination_id(),
+                        r.getMember_id(),
+                        r.getTemplate_id(),
+                        r.getVaccine_name(),
+                        r.getDose_number(),
+                        r.getVaccination_date(),
+                        r.getNext_due_date(),
+                        r.getBatch_number(),
+                        r.getStatus(),
+                        r.getSide_effects(),
+                        r.getNotes(),
+                        r.getCreated_at()
                     });
                 }
             }
@@ -383,19 +416,21 @@ public class MainApplicationFrame extends JFrame {
         try {
             int searchId = Integer.parseInt(keyword);
             VaccinationRecords tempQuery = new VaccinationRecords();
-            tempQuery.setVaccinationId(searchId);
-            if(recordDao.selectById(tempQuery) != null) return true;
+            tempQuery.setVaccination_id(searchId);
+            if(recordDao.selectById(tempQuery) != null && record.getVaccination_id() == searchId) return true;
         } catch (NumberFormatException e) { /* Ignore */ }
         
-        return (record.getVaccineName() != null && record.getVaccineName().toLowerCase().contains(keyword)) ||
-               (record.getBatchNumber() != null && record.getBatchNumber().toLowerCase().contains(keyword)) ||
+        return (record.getVaccine_name() != null && record.getVaccine_name().toLowerCase().contains(keyword)) ||
+               (record.getBatch_number() != null && record.getBatch_number().toLowerCase().contains(keyword)) ||
                (record.getStatus() != null && record.getStatus().toLowerCase().contains(keyword)) ||
+               (record.getSide_effects() != null && record.getSide_effects().toLowerCase().contains(keyword)) ||
                (record.getNotes() != null && record.getNotes().toLowerCase().contains(keyword));
     }
 
  
+    
     private JButton createSidebarButton(String text, Icon icon) { 
-        JButton button = new JButton(text); 
+        JButton button = new JButton(text);
         button.setForeground(SIDEBAR_TEXT_COLOR); 
         button.setBackground(SIDEBAR_BACKGROUND); 
         button.setOpaque(true);                   
@@ -410,7 +445,7 @@ public class MainApplicationFrame extends JFrame {
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(SIDEBAR_HOVER_COLOR); 
+                button.setBackground(SIDEBAR_HOVER_COLOR);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(SIDEBAR_BACKGROUND); 

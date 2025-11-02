@@ -1,6 +1,7 @@
 package com.mycompany.ehr.dao;
 
-import com.mycompany.ehr.model.VaccinationRecords;
+import com.mycompany.ehr.dao.DatabaseConnection; 
+import com.mycompany.ehr.model.VaccinationRecords; 
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,61 +12,65 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-
 public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
 
     private VaccinationRecords extractRecordFromResultSet(ResultSet rs) throws SQLException {
         VaccinationRecords record = new VaccinationRecords();
-        record.setVaccinationId(rs.getInt("vaccinationId"));
-        record.setMemberId(rs.getInt("memberId"));
-        Integer templateId = rs.getInt("templateId");
-        if (rs.wasNull()) record.setTemplateId(null);
-        else record.setTemplateId(templateId);
+        record.setVaccination_id(rs.getInt("vaccination_id"));
+        record.setMember_id(rs.getInt("member_id"));
         
-        record.setVaccineName(rs.getString("vaccineName"));
-        record.setDoseNumber(rs.getInt("doseNumber"));
-        Date vaxDate = rs.getDate("vaccinationDate");
-        if (vaxDate != null) record.setVaccinationDate(vaxDate.toLocalDate());
-        Date dueDate = rs.getDate("nextDueDate");
-        if (dueDate != null) record.setNextDueDate(dueDate.toLocalDate());
-        record.setBatchNumber(rs.getString("batchNumber"));
+        record.setTemplate_id((Integer) rs.getObject("template_id"));
+        
+        record.setVaccine_name(rs.getString("vaccine_name"));
+        record.setDose_number(rs.getInt("dose_number"));
+        
+        Date vaxDate = rs.getDate("vaccination_date");
+        if (vaxDate != null) record.setVaccination_date(vaxDate.toLocalDate());
+        
+        Date dueDate = rs.getDate("next_due_date");
+        if (dueDate != null) record.setNext_due_date(dueDate.toLocalDate());
+        
+        record.setBatch_number(rs.getString("batch_number"));
         record.setStatus(rs.getString("status"));
+        record.setSide_effects(rs.getString("side_effects"));
         record.setNotes(rs.getString("notes"));
-        Timestamp ts = rs.getTimestamp("createdAt");
-        if (ts != null) record.setCreatedAt(ts.toLocalDateTime());
+        
+        Timestamp ts = rs.getTimestamp("created_at");
+        if (ts != null) {
+            record.setCreated_at(ts.toLocalDateTime());
+        }
         return record;
     }
 
     @Override
     public int insert(VaccinationRecords t) {
-        String sql = "INSERT INTO VaccinationRecords (memberId, templateId, vaccineName, doseNumber, vaccinationDate, nextDueDate, batchNumber, status, notes, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Vaccination_Records (member_id, template_id, vaccine_name, dose_number, vaccination_date, next_due_date, batch_number, status, side_effects, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
-            ps.setInt(1, t.getMemberId());
-            if (t.getTemplateId() != null) ps.setInt(2, t.getTemplateId());
-            else ps.setNull(2, java.sql.Types.INTEGER);
-            ps.setString(3, t.getVaccineName());
-            ps.setInt(4, t.getDoseNumber());
-            ps.setDate(5, Date.valueOf(t.getVaccinationDate()));
-            if (t.getNextDueDate() != null) ps.setDate(6, Date.valueOf(t.getNextDueDate()));
-            else ps.setNull(6, java.sql.Types.DATE);
-            ps.setString(7, t.getBatchNumber());
+            ps.setInt(1, t.getMember_id());
+            ps.setObject(2, t.getTemplate_id()); 
+            ps.setString(3, t.getVaccine_name());
+            ps.setInt(4, t.getDose_number());
+            ps.setDate(5, t.getVaccination_date() != null ? Date.valueOf(t.getVaccination_date()) : null);
+            ps.setDate(6, t.getNext_due_date() != null ? Date.valueOf(t.getNext_due_date()) : null);
+            ps.setString(7, t.getBatch_number());
             ps.setString(8, t.getStatus());
-            ps.setString(9, t.getNotes());
-            ps.setTimestamp(10, Timestamp.valueOf(t.getCreatedAt()));
+            ps.setString(9, t.getSide_effects());
+            ps.setString(10, t.getNotes());
+            ps.setTimestamp(11, Timestamp.valueOf(t.getCreated_at()));
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
-                        return rs.getInt(1);
+                        return rs.getInt(1); 
                     }
                 }
             }
             return 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi insert VaccinationRecord: " + e.getMessage());
+            System.err.println("Lỗi khi insert Vaccination_Records: " + e.getMessage());
             e.printStackTrace();
             return 0;
         }
@@ -74,10 +79,10 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
     @Override
     public VaccinationRecords selectById(VaccinationRecords t) {
         if (t == null) return null;
-        int vaccinationId = t.getVaccinationId();
 
+        int vaccinationId = t.getVaccination_id(); 
         VaccinationRecords record = null;
-        String sql = "SELECT * FROM VaccinationRecords WHERE vaccinationId = ?";
+        String sql = "SELECT * FROM Vaccination_Records WHERE vaccination_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
@@ -88,7 +93,7 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi selectById VaccinationRecord: " + e.getMessage());
+            System.err.println("Lỗi khi selectById Vaccination_Records: " + e.getMessage());
             e.printStackTrace();
         }
         return record;
@@ -96,26 +101,25 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
 
     @Override
     public int update(VaccinationRecords t) {
-        String sql = "UPDATE VaccinationRecords SET memberId = ?, templateId = ?, vaccineName = ?, doseNumber = ?, vaccinationDate = ?, nextDueDate = ?, batchNumber = ?, status = ?, notes = ? WHERE vaccinationId = ?";
+        String sql = "UPDATE Vaccination_Records SET member_id = ?, template_id = ?, vaccine_name = ?, dose_number = ?, vaccination_date = ?, next_due_date = ?, batch_number = ?, status = ?, side_effects = ?, notes = ? WHERE vaccination_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            
-            ps.setInt(1, t.getMemberId());
-            if (t.getTemplateId() != null) ps.setInt(2, t.getTemplateId());
-            else ps.setNull(2, java.sql.Types.INTEGER);
-            ps.setString(3, t.getVaccineName());
-            ps.setInt(4, t.getDoseNumber());
-            ps.setDate(5, Date.valueOf(t.getVaccinationDate()));
-            if (t.getNextDueDate() != null) ps.setDate(6, Date.valueOf(t.getNextDueDate()));
-            else ps.setNull(6, java.sql.Types.DATE);
-            ps.setString(7, t.getBatchNumber());
+
+            ps.setInt(1, t.getMember_id());
+            ps.setObject(2, t.getTemplate_id());
+            ps.setString(3, t.getVaccine_name());
+            ps.setInt(4, t.getDose_number());
+            ps.setDate(5, t.getVaccination_date() != null ? Date.valueOf(t.getVaccination_date()) : null);
+            ps.setDate(6, t.getNext_due_date() != null ? Date.valueOf(t.getNext_due_date()) : null);
+            ps.setString(7, t.getBatch_number());
             ps.setString(8, t.getStatus());
-            ps.setString(9, t.getNotes());
-            ps.setInt(10, t.getVaccinationId());
+            ps.setString(9, t.getSide_effects());
+            ps.setString(10, t.getNotes());
+            ps.setInt(11, t.getVaccination_id());
 
             return ps.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Lỗi khi update VaccinationRecord: " + e.getMessage());
+            System.err.println("Lỗi khi update Vaccination_Records: " + e.getMessage());
             e.printStackTrace();
             return 0;
         }
@@ -124,16 +128,16 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
     @Override
     public int delete(VaccinationRecords t) {
         if (t == null) return 0;
-        int vaccinationId = t.getVaccinationId();
+        int vaccinationId = t.getVaccination_id();
 
-        String sql = "DELETE FROM VaccinationRecords WHERE vaccinationId = ?";
+        String sql = "DELETE FROM Vaccination_Records WHERE vaccination_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, vaccinationId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Lỗi khi delete VaccinationRecord: " + e.getMessage());
+            System.err.println("Lỗi khi delete Vaccination_Records: " + e.getMessage());
             e.printStackTrace();
             return 0;
         }
@@ -142,7 +146,8 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
     @Override
     public ArrayList<VaccinationRecords> selectAll() {
         ArrayList<VaccinationRecords> records = new ArrayList<>();
-        String sql = "SELECT * FROM VaccinationRecords";
+
+        String sql = "SELECT * FROM Vaccination_Records";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -150,7 +155,7 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
                 records.add(extractRecordFromResultSet(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi selectAll VaccinationRecords: " + e.getMessage());
+            System.err.println("Lỗi khi selectAll Vaccination_Records: " + e.getMessage());
             e.printStackTrace();
         }
         return records;
@@ -159,7 +164,8 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
     @Override
     public ArrayList<VaccinationRecords> selectByCondition(String condition) {
         ArrayList<VaccinationRecords> records = new ArrayList<>();
-        String sql = "SELECT * FROM VaccinationRecords WHERE " + condition; 
+
+        String sql = "SELECT * FROM Vaccination_Records WHERE " + condition; 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -167,7 +173,7 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
                 records.add(extractRecordFromResultSet(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi selectByCondition VaccinationRecords: " + e.getMessage());
+            System.err.println("Lỗi khi selectByCondition Vaccination_Records: " + e.getMessage());
             e.printStackTrace();
         }
         return records;
@@ -175,7 +181,8 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
     
     @Override
     public boolean exists(String condition) {
-        String sql = "SELECT EXISTS (SELECT 1 FROM VaccinationRecords WHERE " + condition + ")";
+
+        String sql = "SELECT EXISTS (SELECT 1 FROM Vaccination_Records WHERE " + condition + ")";
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -183,7 +190,7 @@ public class VaccinationRecordsDaoImpl implements VaccinationRecordsDao {
                 return rs.getBoolean(1);
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi exists VaccinationRecords: " + e.getMessage());
+            System.err.println("Lỗi khi exists Vaccination_Records: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
