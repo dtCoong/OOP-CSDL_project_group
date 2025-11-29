@@ -9,7 +9,7 @@ public class Department {
     private LocalDateTime createdAt;
     private String locationDetails;
 
-    // --- Constructors ---
+    // Constructors 
     public Department() {
     }
 
@@ -19,7 +19,7 @@ public class Department {
         this.locationDetails = locationDetails;
     }
 
-    // --- Getters and Setters ---
+    // Getters and Setters
     public Integer getDepartmentId() {
         return departmentId;
     }
@@ -60,7 +60,7 @@ public class Department {
         this.locationDetails = locationDetails;
     }
 
-    // --- toString() for debugging ---
+    // toString() 
     @Override
     public String toString() {
         return "Department{" +
