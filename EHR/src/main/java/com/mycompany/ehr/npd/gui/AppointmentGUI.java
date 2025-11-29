@@ -24,11 +24,8 @@ public class AppointmentGUI {
             JFrame frame = new JFrame("Quản lý Lịch hẹn");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             
-            // Thêm panel GUI của bạn vào frame
-            // Nó sẽ tự động tìm thấy lớp 'AppointmentPanel' bên dưới
             frame.add(new AppointmentPanel());
             
-            // Lớp Appointment có nhiều trường, cần cửa sổ rộng hơn
             frame.setMinimumSize(new Dimension(800, 600));
             frame.pack(); 
             frame.setLocationRelativeTo(null); 
@@ -45,11 +42,9 @@ class AppointmentPanel extends JPanel {
     private final AppointmentController controller;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    // Components
     private JTable appointmentTable;
     private DefaultTableModel tableModel;
-    
-    // Form Fields
+
     private JTextField idField, appointmentDateField, chiefComplaintField, costField;
     private JSpinner memberIdSpinner, doctorIdSpinner;
     private JComboBox<Appointment.AppointmentType> typeComboBox;
@@ -113,7 +108,7 @@ class AppointmentPanel extends JPanel {
     private JComponent createFormPanel() {
         JPanel formPanel = new JPanel(new BorderLayout(10, 10));
         
-        JPanel fieldsPanel = new JPanel(new GridLayout(0, 4, 10, 5)); // 4 cột
+        JPanel fieldsPanel = new JPanel(new GridLayout(0, 4, 10, 5)); 
         
         fieldsPanel.add(new JLabel("ID Lịch hẹn:"));
         idField = new JTextField();
@@ -538,7 +533,7 @@ class Appointment {
     public Appointment() {
     }
 
-    // --- Getters and Setters ---
+    // Getters and Setters
     public Integer getAppointmentId() { return appointmentId; }
     public void setAppointmentId(Integer appointmentId) { this.appointmentId = appointmentId; }
     public Integer getMemberId() { return memberId; }
