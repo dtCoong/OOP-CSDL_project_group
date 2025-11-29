@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class HospitalDAO implements DAOInterface<Hospital> {
 
-    // Singleton Pattern
     private static HospitalDAO instance;
 
     private HospitalDAO() {
@@ -62,7 +61,6 @@ public class HospitalDAO implements DAOInterface<Hospital> {
             statement.setString(3, t.getHotline());
             statement.setString(4, t.getWebsite());
             
-            // Tự động đặt created_at
             statement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
 
             result = statement.executeUpdate();
@@ -94,7 +92,6 @@ public class HospitalDAO implements DAOInterface<Hospital> {
             statement.setString(3, t.getHotline());
             statement.setString(4, t.getWebsite());
             
-            // WHERE clause
             statement.setInt(5, t.getHospitalId());
 
             result = statement.executeUpdate();
