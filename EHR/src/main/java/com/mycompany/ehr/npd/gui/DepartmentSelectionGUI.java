@@ -6,7 +6,7 @@ import com.mycompany.ehr.npd.model.Department;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
-import java.sql.SQLException; // <-- Đảm bảo import SQLException
+import java.sql.SQLException; 
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class DepartmentSelectionGUI extends JDialog {
     // Data
     private DepartmentDAO departmentDAO;
     private Department selectedDepartment = null;
-    private int hospitalId; // ID của bệnh viện để lọc
+    private int hospitalId; 
 
     /**
      * Constructor
@@ -32,10 +32,10 @@ public class DepartmentSelectionGUI extends JDialog {
     public DepartmentSelectionGUI(Frame owner, int hospitalId) {
         super(owner, "Bước 2: Chọn Khoa", true); 
         this.departmentDAO = DepartmentDAO.getInstance();
-        this.hospitalId = hospitalId; // Lưu lại ID bệnh viện
+        this.hospitalId = hospitalId; 
 
         setupUI();
-        loadData(); // Tải dữ liệu đã lọc
+        loadData(); 
     }
 
     private void setupUI() {
@@ -68,7 +68,6 @@ public class DepartmentSelectionGUI extends JDialog {
         buttonPanel.add(chooseButton);
         add(buttonPanel, BorderLayout.SOUTH);
         
-        // Xử lý Sự kiện
         chooseButton.addActionListener(e -> onChoose());
         cancelButton.addActionListener(e -> onCancel());
     }
