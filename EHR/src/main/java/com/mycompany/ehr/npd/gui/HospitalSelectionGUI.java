@@ -34,7 +34,6 @@ public class HospitalSelectionGUI extends JDialog {
      * Constructor
      */
     public HospitalSelectionGUI(Frame owner) {
-        // true = Modal Dialog
         super(owner, "Chọn Bệnh viện", true); 
         
         this.hospitalDAO = HospitalDAO.getInstance();
