@@ -99,13 +99,12 @@ public class DoctorGUI extends JDialog {
         try {
             ArrayList<Doctor> doctors;
             
-            // *** ĐIỂM QUAN TRỌNG: LỌC THEO DEPARTMENT ID ***
+            // LỌC THEO DEPARTMENT ID 
             if (this.departmentId <= 0) {
                  // Fallback nếu không có ID khoa
                 doctors = doctorDAO.selectAll();
             } else {
                 String condition = "department_id = " + this.departmentId;
-                // CẢNH BÁO: Tương tự, nên dùng PreparedStatement
                 doctors = doctorDAO.selectByCondition(condition);
             }
             
@@ -135,9 +134,7 @@ public class DoctorGUI extends JDialog {
         return this.selectedDoctor;
     }
 
-    // =========================================================================
     // LỚP LỒNG NHAU (INNER CLASS) CHO TABLE MODEL
-    // =========================================================================
     private class DoctorTableModel extends AbstractTableModel {
         private List<Doctor> doctors;
         private final String[] columnNames = {"ID", "Họ Tên", "Học vị", "Kinh nghiệm (năm)", "Email"};
@@ -167,13 +164,8 @@ public class DoctorGUI extends JDialog {
         }
     }
 
-    // =========================================================================
     // PHƯƠNG THỨC MAIN ĐỂ TEST
-    // =========================================================================
-    /**
-     * Đây là main method ví dụ cách SỬ DỤNG JDialog này.
-     * Bạn có thể chạy file này để xem cửa sổ chọn.
-     */
+
     public static void main(String[] args) {
         // Giả lập một Frame cha
         JFrame testFrame = new JFrame();
@@ -182,20 +174,17 @@ public class DoctorGUI extends JDialog {
         
         System.out.println("Đang mở cửa sổ chọn Bác sĩ...");
 
-        // --- CÁCH SỬ DỤNG DIALOG ---
+        //  CÁCH SỬ DỤNG DIALOG
         
-        // SỬA ĐỔI Ở ĐÂY:
         // Cung cấp một ID khoa (departmentId) bất kỳ để test, ví dụ: 1
         int testDepartmentId = 1; 
         
         // 1. Tạo dialog
         DoctorGUI doctorDialog = new DoctorGUI(testFrame, testDepartmentId);
         
-        // 2. Hiển thị (code sẽ tạm dừng ở đây cho đến khi dialog đóng)
+        // 2. Hiển thị 
         doctorDialog.setVisible(true);
 
-        // ... (phần còn lại của hàm main giữ nguyên) ...
-        
         Doctor chosenDoctor = doctorDialog.getSelectedDoctor();
         if (chosenDoctor != null) {
             System.out.println("Bác sĩ bạn đã chọn là:");
