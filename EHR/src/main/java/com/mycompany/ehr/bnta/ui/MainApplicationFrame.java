@@ -1,10 +1,8 @@
 package com.mycompany.ehr.bnta.ui;
 
-// THÊM CÁC IMPORT NÀY
+
 import com.mycompany.ehr.dtc.model.FamilyMembers;
 import com.mycompany.ehr.dtc.model.User;
-
-// THÊM IMPORT CHO NÚT QUAY LẠI
 import com.mycompany.ehr.dtc.ui.MemberDetailsFrame; 
 
 import com.mycompany.ehr.bnta.dao.VaccinationRecordsDao;
@@ -24,7 +22,6 @@ public class MainApplicationFrame extends JFrame {
     private VaccineTemplatesDao templateDao;
     private VaccinationRecordsDao recordDao;
     
-    // THÊM 2 BIẾN NÀY
     private User currentUser;
     private FamilyMembers selectedMember;
 
@@ -47,15 +44,12 @@ public class MainApplicationFrame extends JFrame {
     private CardLayout cardLayout;
     private JLabel headerLabel; 
     
-  
-    private ImageIcon headerTemplateIcon, headerRecordIcon; 
     
     
-    // SỬA CONSTRUCTOR: TỪ 2 THÀNH 4 THAM SỐ
     public MainApplicationFrame(VaccineTemplatesDao templateDao, VaccinationRecordsDao recordDao, User user, FamilyMembers member) {
         this.templateDao = templateDao;
         this.recordDao = recordDao;
-        // GÁN GIÁ TRỊ CHO 2 BIẾN MỚI
+
         this.currentUser = user;
         this.selectedMember = member;
 
@@ -63,15 +57,10 @@ public class MainApplicationFrame extends JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) { e.printStackTrace(); }
         
-        loadIcons(); 
-
-        // SỬA TIÊU ĐỀ ĐỂ HIỂN THỊ TÊN THÀNH VIÊN
+        
         setTitle("Hồ sơ Tiêm chủng - " + selectedMember.getName());
         setSize(1280, 800);
         
-        // SỬA LỖI QUAN TRỌNG:
-        // Đổi EXIT_ON_CLOSE thành DISPOSE_ON_CLOSE
-        // để nó chỉ đóng cửa sổ này, không tắt toàn bộ chương trình
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         setLocationRelativeTo(null);
@@ -106,32 +95,9 @@ public class MainApplicationFrame extends JFrame {
         
         cardLayout.show(contentPanel, "TEMPLATES");
         headerLabel.setText("Các loại vaccine hiện có và Lịch tiêm chuẩn");
-        headerLabel.setIcon(headerTemplateIcon); 
         
     }
     
-
-    private void loadIcons() {
-        try {
-            headerTemplateIcon = resizeIcon(new ImageIcon(getClass().getResource("/icons/vaccine.png")), 24, 24);
-            headerRecordIcon   = resizeIcon(new ImageIcon(getClass().getResource("/icons/hoso.png")), 24, 24);
-        } catch (Exception e) {
-            System.err.println("Lỗi khi tải icon. Đảm bảo file icon (vaccine.png, hoso.png) tồn tại trong src/main/resources/icons/");
-            headerTemplateIcon = null; 
-            headerRecordIcon = null;
-        }
-    }
-    
-   
-    private ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
-        if (icon != null && icon.getImage() != null) {
-            Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            return new ImageIcon(img);
-        }
-        return null;
-    }
-
-
     private JPanel createHeaderPanel() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(HEADER_BACKGROUND);
@@ -149,21 +115,18 @@ public class MainApplicationFrame extends JFrame {
     }
     
 
-    // *** SỬA ĐỔI Ở ĐÂY ***
     private JPanel createSidebarPanel() {
         JPanel sidebar = new JPanel();
         
-        // SỬA: Thêm 1 hàng cho nút "Quay lại"
-        sidebar.setLayout(new GridLayout(3, 1)); // Sửa từ 2 thành 3
+        sidebar.setLayout(new GridLayout(3, 1));
         sidebar.setBackground(SIDEBAR_BACKGROUND);
-        sidebar.setPreferredSize(new Dimension(240, 0));
+        sidebar.setPreferredSize(new Dimension(270, 0));
         
         JButton templatesButton = createSidebarButton("Các loại vaccine hiện có và Lịch tiêm chuẩn", null);
         templatesButton.addActionListener(e -> {
             
             cardLayout.show(contentPanel, "TEMPLATES");
             headerLabel.setText("Các loại vaccine hiện có và Lịch tiêm chuẩn");
-            headerLabel.setIcon(headerTemplateIcon); 
         });
         
         JButton recordsButton = createSidebarButton("Quản lý Hồ sơ Tiêm chủng", null);
@@ -171,22 +134,21 @@ public class MainApplicationFrame extends JFrame {
             
             cardLayout.show(contentPanel, "RECORDS");
             headerLabel.setText("Quản lý Hồ sơ Tiêm chủng");
-            headerLabel.setIcon(headerRecordIcon); 
         });
         
         sidebar.add(templatesButton);
         sidebar.add(recordsButton);
         
-        // THÊM MỚI: Nút Quay Lại
+        
         JButton backButton = createSidebarButton("Quay lại Hồ sơ sức khỏe", null);
-        backButton.setBackground(new Color(192, 57, 43)); // Màu đỏ
+        backButton.setBackground(new Color(192, 57, 43));
         backButton.addActionListener(e -> {
             MemberDetailsFrame detailsFrame = new MemberDetailsFrame(currentUser, selectedMember);
             detailsFrame.setVisible(true);
             MainApplicationFrame.this.dispose();
         });
         
-        sidebar.add(backButton); // Thêm nút vào sidebar
+        sidebar.add(backButton);
         
         return sidebar;
     }
@@ -263,6 +225,9 @@ public class MainApplicationFrame extends JFrame {
         JButton reloadButton = createTextButton("Tải lại", "Tải lại danh sách");
         buttonPanel.add(reloadButton);
 
+        JButton exportButton = createTextButton("Xuất File", "Xuất báo cáo ra file text");
+        buttonPanel.add(exportButton);
+
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 10));
         searchPanel.setOpaque(false);
         JTextField searchField = new JTextField(20);
@@ -321,12 +286,6 @@ public class MainApplicationFrame extends JFrame {
     }
 
 
-    
-    // *** LƯU Ý QUAN TRỌNG ***
-    // Phương thức này hiện đang tải TẤT CẢ hồ sơ.
-    // Bạn nên cập nhật DAO của mình để có phương thức
-    // ví dụ: selectByMemberId(selectedMember.getMember_id())
-    // và gọi nó ở đây để chỉ tải hồ sơ cho thành viên đã chọn.
     private void loadTemplateData() {
         try {
             templateTableModel.setRowCount(0);
@@ -351,16 +310,11 @@ public class MainApplicationFrame extends JFrame {
         }
     }
 
-    // *** LƯU Ý QUAN TRỌNG ***
-    // Tương tự như trên, phương thức này đang tải TẤT CẢ hồ sơ.
-    // Bạn nên lọc theo `selectedMember.getMember_id()`
     private void loadRecordData() {
         try {
             recordTableModel.setRowCount(0);
-            
-            // Tạm thời vẫn dùng selectAll()
-            // Nên sửa thành: recordDao.selectByMemberId(selectedMember.getMember_id())
-            ArrayList<VaccinationRecords> records = recordDao.selectAll();
+
+            ArrayList<VaccinationRecords> records = recordDao.selectByMemberId(selectedMember.getMemberId());
             
             for (VaccinationRecords r : records) {
                 recordTableModel.addRow(new Object[] {
@@ -427,14 +381,11 @@ public class MainApplicationFrame extends JFrame {
                (template.getNotes() != null && template.getNotes().toLowerCase().contains(keyword));
     }
 
-    // *** LƯU Ý QUAN TRỌNG ***
-    // Phương thức này cũng nên được lọc theo memberId
     private void searchRecords(String keyword) {
          if (keyword == null || keyword.trim().isEmpty()) { loadRecordData(); return; }
         try {
             keyword = keyword.toLowerCase().trim();
-            // Nên sửa thành: recordDao.selectByMemberId(selectedMember.getMember_id())
-            ArrayList<VaccinationRecords> allRecords = recordDao.selectAll();
+            ArrayList<VaccinationRecords> allRecords = recordDao.selectByMemberId(selectedMember.getMemberId());
             recordTableModel.setRowCount(0);
             for (VaccinationRecords r : allRecords) {
                 if (matchesKeyword(r, keyword)) {
@@ -476,7 +427,6 @@ public class MainApplicationFrame extends JFrame {
 
  
     
-    // *** SỬA ĐỔI Ở ĐÂY ***
     private JButton createSidebarButton(String text, Icon icon) { 
         JButton button = new JButton(text);
         button.setForeground(SIDEBAR_TEXT_COLOR); 
@@ -491,16 +441,13 @@ public class MainApplicationFrame extends JFrame {
         button.setHorizontalAlignment(SwingConstants.LEFT);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // SỬA: Cập nhật MouseListener để xử lý đúng màu cho nút "Quay lại"
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                // Chỉ đổi màu hover nếu KHÔNG phải là nút màu đỏ
                 if (!button.getBackground().equals(new Color(192, 57, 43))) {
                     button.setBackground(SIDEBAR_HOVER_COLOR);
                 }
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                // Chỉ đổi về màu nền nếu KHÔNG phải là nút màu đỏ
                 if (!button.getBackground().equals(new Color(192, 57, 43))) {
                     button.setBackground(SIDEBAR_BACKGROUND); 
                 }
