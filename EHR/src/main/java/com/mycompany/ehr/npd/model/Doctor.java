@@ -20,7 +20,6 @@ public class Doctor {
             return displayName;
         }
         
-        // Hàm này tìm enum bằng tên hiển thị (thay vì hằng số)
         public static DoctorDegree fromDisplayName(String displayName) {
             if (displayName == null) return null;
             for (DoctorDegree degree : DoctorDegree.values()) {
@@ -28,7 +27,7 @@ public class Doctor {
                     return degree;
                 }
             }
-            return null; // Hoặc ném lỗi nếu muốn
+            return null; 
         }
     }
     
@@ -42,11 +41,11 @@ public class Doctor {
     private String avatarPath;
     private String email;
 
-    // --- Constructors ---
+    // Constructors 
     public Doctor() {
     }
 
-    // --- Getters and Setters ---
+    // Getters and Setters
     public Integer getDoctorId() {
         return doctorId;
     }
@@ -119,7 +118,7 @@ public class Doctor {
         this.email = email;
     }
 
-    // --- toString() for debugging ---
+    // toString() 
     @Override
     public String toString() {
         return "Doctor{" +
