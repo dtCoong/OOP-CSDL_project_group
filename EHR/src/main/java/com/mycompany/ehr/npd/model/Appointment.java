@@ -79,7 +79,7 @@ public class Appointment {
         }
     }
 
-    // --- Các trường dữ liệu (Khớp với bảng Appointments) ---
+    // Các trường dữ liệu (Khớp với bảng Appointments) 
     private Integer appointmentId;
     private Integer memberId;
     private Integer doctorId;
@@ -88,7 +88,7 @@ public class Appointment {
     private LocalDateTime appointmentDate;
     private AppointmentType type;
     private AppointmentStatus status;
-    private String chiefComplaint; // (Lý do khám)
+    private String chiefComplaint; 
     private String diagnosis;
     private String treatmentNotes;
     private LocalDate followUpDate;
@@ -102,7 +102,7 @@ public class Appointment {
     
     public Appointment() {}
 
-    // --- Getters and Setters ---
+    // Getters and Setters 
     public Integer getAppointmentId() { return appointmentId; }
     public void setAppointmentId(Integer appointmentId) { this.appointmentId = appointmentId; }
     public Integer getMemberId() { return memberId; }
