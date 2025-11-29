@@ -42,13 +42,11 @@ public class BookingSystemGUI extends JFrame {
     private JLabel hospitalLabel, departmentLabel, locationLabel, selectedDoctorLabel;
     private JPanel patientInfoPanel;
 
-    // SỬA: Constructor nhận User
     public BookingSystemGUI(User user) {
         this.currentUser = user;
         
         setTitle("Hệ thống Đặt lịch hẹn");
         setSize(800, 600); 
-        // SỬA: Đổi thành DISPOSE_ON_CLOSE
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         
@@ -58,7 +56,6 @@ public class BookingSystemGUI extends JFrame {
     }
 
     private void viewAppointments() {
-        // SỬA: Truyền ID của user hiện tại
         ViewAppointmentsGUI viewDialog = new ViewAppointmentsGUI(this, this.currentUser.getUserId());
         viewDialog.setVisible(true);
     }
@@ -132,7 +129,6 @@ public class BookingSystemGUI extends JFrame {
         // 3. Panel Nút bấm (Phía dưới)
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         
-        // THÊM MỚI: Nút Quay lại
         JButton btnBack = new JButton("Quay lại Trang chủ");
         btnBack.setFont(new Font("Arial", Font.PLAIN, 14));
         btnBack.setBackground(new Color(220, 220, 220));
@@ -171,7 +167,6 @@ public class BookingSystemGUI extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    // SỬA: Dùng currentUser.getUserId() và thêm try-catch
     private void loadFamilyMembers() {
         try {
             String condition = "user_id = " + this.currentUser.getUserId();
