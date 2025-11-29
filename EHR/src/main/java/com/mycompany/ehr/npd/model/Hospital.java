@@ -10,7 +10,7 @@ public class Hospital {
     private String website;
     private LocalDateTime createdAt;
 
-    // --- Constructors ---
+    // Constructors 
     public Hospital() {
     }
 
@@ -21,7 +21,7 @@ public class Hospital {
         this.website = website;
     }
 
-    // --- Getters and Setters ---
+    // Getters and Setters 
     public Integer getHospitalId() {
         return hospitalId;
     }
@@ -70,7 +70,7 @@ public class Hospital {
         this.createdAt = createdAt;
     }
 
-    // --- toString() for debugging ---
+    // toString() 
     @Override
     public String toString() {
         return "Hospital{" +
