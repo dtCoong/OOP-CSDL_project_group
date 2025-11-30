@@ -1,6 +1,5 @@
 package com.mycompany.ehr.bnta.ui;
 
-
 import com.mycompany.ehr.dtc.model.FamilyMembers;
 import com.mycompany.ehr.dtc.model.User;
 import com.mycompany.ehr.dtc.ui.MemberDetailsFrame; 
@@ -39,11 +38,9 @@ public class MainApplicationFrame extends JFrame {
     private final Color ZEBRA_STRIPE_COLOR = new Color(255, 255, 255);
     private final Color BUTTON_HOVER_BACKGROUND_TEXT = new Color(210, 230, 250);
 
-    
     private JPanel contentPanel;
     private CardLayout cardLayout;
     private JLabel headerLabel; 
-    
     
     
     public MainApplicationFrame(VaccineTemplatesDao templateDao, VaccinationRecordsDao recordDao, User user, FamilyMembers member) {
@@ -56,8 +53,7 @@ public class MainApplicationFrame extends JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) { e.printStackTrace(); }
-        
-        
+               
         setTitle("Hồ sơ Tiêm chủng - " + selectedMember.getName());
         setSize(1280, 800);
         
@@ -91,13 +87,14 @@ public class MainApplicationFrame extends JFrame {
         
         loadTemplateData();
         loadRecordData();
-        
-        
+         
         cardLayout.show(contentPanel, "TEMPLATES");
         headerLabel.setText("Các loại vaccine hiện có và Lịch tiêm chuẩn");
         
     }
     
+
+
     private JPanel createHeaderPanel() {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(HEADER_BACKGROUND);
@@ -115,6 +112,7 @@ public class MainApplicationFrame extends JFrame {
     }
     
 
+
     private JPanel createSidebarPanel() {
         JPanel sidebar = new JPanel();
         
@@ -122,25 +120,25 @@ public class MainApplicationFrame extends JFrame {
         sidebar.setBackground(SIDEBAR_BACKGROUND);
         sidebar.setPreferredSize(new Dimension(270, 0));
         
-        JButton templatesButton = createSidebarButton("Các loại vaccine hiện có và Lịch tiêm chuẩn", null);
+        JButton templatesButton = createSidebarButton("Các loại vaccine hiện có và Lịch tiêm chuẩn");
         templatesButton.addActionListener(e -> {
             
             cardLayout.show(contentPanel, "TEMPLATES");
             headerLabel.setText("Các loại vaccine hiện có và Lịch tiêm chuẩn");
         });
         
-        JButton recordsButton = createSidebarButton("Quản lý Hồ sơ Tiêm chủng", null);
+        JButton recordsButton = createSidebarButton("Quản lý Hồ sơ tiêm chủng");
         recordsButton.addActionListener(e -> {
             
             cardLayout.show(contentPanel, "RECORDS");
-            headerLabel.setText("Quản lý Hồ sơ Tiêm chủng");
+            headerLabel.setText("Quản lý Hồ sơ tiêm chủng");
         });
         
         sidebar.add(templatesButton);
         sidebar.add(recordsButton);
         
         
-        JButton backButton = createSidebarButton("Quay lại Hồ sơ sức khỏe", null);
+        JButton backButton = createSidebarButton("Quay lại Hồ sơ sức khỏe");
         backButton.setBackground(new Color(192, 57, 43));
         backButton.addActionListener(e -> {
             MemberDetailsFrame detailsFrame = new MemberDetailsFrame(currentUser, selectedMember);
@@ -153,6 +151,8 @@ public class MainApplicationFrame extends JFrame {
         return sidebar;
     }
     
+
+
     private JPanel createTemplatePanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -210,6 +210,8 @@ public class MainApplicationFrame extends JFrame {
         return panel;
     }
 
+
+
     private JPanel createRecordPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -227,6 +229,61 @@ public class MainApplicationFrame extends JFrame {
 
         JButton exportButton = createTextButton("Xuất File", "Xuất báo cáo ra file text");
         buttonPanel.add(exportButton);
+
+
+        exportButton.addActionListener(e -> {
+            if (recordTableModel.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "Không có dữ liệu để xuất!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            try {
+                String cleanName = selectedMember.getName().replaceAll("\\s+", "");
+                String fileName = "HoSoTiemChung_" + cleanName + ".txt";
+                
+                java.io.FileWriter fw = new java.io.FileWriter(fileName);
+                java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
+                
+                bw.write("=== HỒ SƠ TIÊM CHỦNG: " + selectedMember.getName().toUpperCase() + " ===\n");
+                bw.write("Ngày xuất báo cáo: " + java.time.LocalDate.now() + "\n");
+                bw.write("------------------------------------------------------------------------------------------\n");
+                bw.write(String.format("%-30s | %-15s | %-10s | %-15s | %-15s\n", 
+                        "Tên Vaccine", "Ngày tiêm", "Mũi số", "Trạng thái", "Ngày hẹn tiếp"));
+                bw.write("------------------------------------------------------------------------------------------\n");
+                
+                for (int i = 0; i < recordTableModel.getRowCount(); i++) {
+                    String vName = recordTableModel.getValueAt(i, 3).toString();
+                    String vDate = recordTableModel.getValueAt(i, 5) != null ? recordTableModel.getValueAt(i, 5).toString() : "N/A";
+                    String vDose = recordTableModel.getValueAt(i, 4).toString();
+                    String vStatus = recordTableModel.getValueAt(i, 8).toString();
+                    String vNextDate = recordTableModel.getValueAt(i, 6) != null ? recordTableModel.getValueAt(i, 6).toString() : "";
+                    
+                    bw.write(String.format("%-30s | %-15s | %-10s | %-15s | %-15s\n", 
+                            vName, vDate, vDose, vStatus, vNextDate));
+                }
+                
+                bw.write("------------------------------------------------------------------------------------------\n");
+                bw.write("Tổng số mũi tiêm đã ghi nhận: " + recordTableModel.getRowCount());
+                bw.close();
+                
+                int choice = JOptionPane.showConfirmDialog(this, 
+                        "Đã xuất file thành công: " + fileName + "\nBạn có muốn mở file ngay không?", 
+                        "Thành công", JOptionPane.YES_NO_OPTION);
+                
+                if (choice == JOptionPane.YES_OPTION) {
+                    try {
+                        java.awt.Desktop.getDesktop().open(new java.io.File(fileName));
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "Không thể tự động mở file, hãy tìm file trong thư mục dự án.");
+                    }
+                }
+
+            } catch (java.io.IOException ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi ghi file: " + ex.getMessage(), "Lỗi Export", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        });
+
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 10));
         searchPanel.setOpaque(false);
@@ -286,6 +343,7 @@ public class MainApplicationFrame extends JFrame {
     }
 
 
+
     private void loadTemplateData() {
         try {
             templateTableModel.setRowCount(0);
@@ -309,6 +367,8 @@ public class MainApplicationFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Lỗi tải dữ liệu Templates: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+
 
     private void loadRecordData() {
         try {
@@ -338,6 +398,7 @@ public class MainApplicationFrame extends JFrame {
     }
 
    
+
     private void searchTemplates(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) { loadTemplateData(); return; }
         try {
@@ -365,6 +426,8 @@ public class MainApplicationFrame extends JFrame {
         }
     }
 
+
+
     private boolean matchesKeyword(VaccineTemplates template, String keyword) {
         try {
             int searchId = Integer.parseInt(keyword);
@@ -380,6 +443,8 @@ public class MainApplicationFrame extends JFrame {
                (template.getDescription() != null && template.getDescription().toLowerCase().contains(keyword)) ||
                (template.getNotes() != null && template.getNotes().toLowerCase().contains(keyword));
     }
+
+
 
     private void searchRecords(String keyword) {
          if (keyword == null || keyword.trim().isEmpty()) { loadRecordData(); return; }
@@ -410,6 +475,8 @@ public class MainApplicationFrame extends JFrame {
         }
     }
     
+
+
     private boolean matchesKeyword(VaccinationRecords record, String keyword) {
         try {
             int searchId = Integer.parseInt(keyword);
@@ -427,7 +494,7 @@ public class MainApplicationFrame extends JFrame {
 
  
     
-    private JButton createSidebarButton(String text, Icon icon) { 
+    private JButton createSidebarButton(String text) { 
         JButton button = new JButton(text);
         button.setForeground(SIDEBAR_TEXT_COLOR); 
         button.setBackground(SIDEBAR_BACKGROUND); 
@@ -457,6 +524,7 @@ public class MainApplicationFrame extends JFrame {
     }
     
  
+
     private JButton createTextButton(String text, String toolTipText) {
         JButton button = new JButton(text);
         button.setToolTipText(toolTipText);
@@ -481,6 +549,7 @@ public class MainApplicationFrame extends JFrame {
         });
         return button;
     }
+
 
 
     private void setupTableStyle(JTable table) {
